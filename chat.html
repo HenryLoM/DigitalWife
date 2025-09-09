@@ -1,0 +1,195 @@
+<!-- ================================================================== -->
+<!-- Wife AI Chat Page -->
+<!-- ================================================================== -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DigitalWife — Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./chat.css">
+
+    <!-- Scripts -->
+    <script src="./code/*theme-switcher.js" type="module"></script>
+    <script src="./code/ai.js" type="module" defer></script>
+    <script src="./code/mixer.js" type="module"></script>
+    <script src="./code/customization-popup.js" type="module"></script>
+</head>
+<body>
+
+<!-- ================================================================== -->
+<!-- Frame Structure -->
+<!-- ================================================================== -->
+<div id="frame-wrapper">
+    <div class="frame-corner left-top"></div>
+    <div class="frame-corner right-top"></div>
+    <div class="frame-corner left-bottom"></div>
+    <div class="frame-corner right-bottom"></div>
+
+    <div class="frame-edge top"></div>
+    <div class="frame-edge bottom"></div>
+    <div class="frame-edge left"></div>
+    <div class="frame-edge right"></div>
+</div>
+
+<!-- ================================================================== -->
+<!-- Table Layout -->
+<!-- ================================================================== -->
+<table>
+    <thead>
+        <tr>
+            <td>
+                <!-- ASCII Cat -->
+                <pre class="centered color" style="margin-top: -75px;">
+  |\      _,,,---,,_
+ZZZzz /,`.-'`'    -.  ;-;;,_
+     |,4-  ) )-,_. ,\ (  `' -'
+'---''(_/--'  `-'\_)
+                </pre>
+
+                <!-- Navigation -->
+                <p style="text-align: center;">
+                    <a href="./homepage.html">Home</a> |
+                    > <a href="./chat.html" class="mask">Chat</a> < |
+                    <a href="./log.html" class="mask"><i>Last updated:</i> 2025-09-08</a>
+                </p>
+            </td>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>
+                <!-- ================================================================== -->
+                <!-- Main Container -->
+                <!-- ================================================================== -->
+                <div id="container-setup">
+
+                    <!-- Customize Popup -->
+                    <div id="customize-popup" class="hidden">
+                        <div class="customize-popup-content">
+                            <h3>Customize</h3>
+                            <div>
+                                <h4>Clothes</h4>
+                                <ul id="clothes-list"></ul>
+                            </div>
+                            <div>
+                                <h4>Places</h4>
+                                <ul id="places-list"></ul>
+                            </div>
+                            <div>
+                                <h4>Additional</h4>
+                                <ul id="additional-list"></ul>
+                            </div>
+                            <button id="close-customize-popup">Close</button>
+                        </div>
+                    </div>
+
+                    <!-- Editor Popup -->
+                    <div id="editor-popup" class="popup-window-preset">
+                        <textarea id="editing-text" style="height: 75%; width: 100%;"></textarea>
+                        <br>
+                        <button id="editor-save-btn">Save</button>
+                        <button id="editor-close-btn">Close</button>
+                        <div id="char-counter">0/700</div>
+                    </div>
+
+                    <!-- Title -->
+                    <input id="title-input" type="text" placeholder="Nicole's room" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+                    <div class="container-row">
+                        <!-- ================================================================== -->
+                        <!-- Chat Window -->
+                        <!-- ================================================================== -->
+                        <div id="chat-window" class="chat-window-preset" style="position: relative;">
+                            <div class="mini-frame-wrapper">
+                                <div class="mini-frame-corner left-top"></div>
+                                <div class="mini-frame-corner right-top"></div>
+                                <div class="mini-frame-corner left-bottom"></div>
+                                <div class="mini-frame-corner right-bottom"></div>
+                                <div class="mini-frame-edge top"></div>
+                                <div class="mini-frame-edge bottom"></div>
+                                <div class="mini-frame-edge left"></div>
+                                <div class="mini-frame-edge right"></div>
+                            </div>
+                            <div id="chat-content" class="chat-content-preset"></div>
+                        </div>
+
+                        <!-- ================================================================== -->
+                        <!-- Wife Image Window -->
+                        <!-- ================================================================== -->
+                        <div id="wife-window" class="wife-window-preset" style="position: relative;">
+                            <div class="mini-frame-wrapper">
+                                <div class="mini-frame-corner left-top"></div>
+                                <div class="mini-frame-corner right-top"></div>
+                                <div class="mini-frame-corner left-bottom"></div>
+                                <div class="mini-frame-corner right-bottom"></div>
+                                <div class="mini-frame-edge top"></div>
+                                <div class="mini-frame-edge bottom"></div>
+                                <div class="mini-frame-edge left"></div>
+                                <div class="mini-frame-edge right"></div>
+                            </div>
+
+                            <!-- Layered Character Assets -->
+                            <img id="background" class="layer-overlay bg-preset lo-to-save" style="display: none;">
+                            <div id="night-theme" class="layer-overlay night-theme-preset"></div>
+                            <img id="wife-hair-back" class="layer-overlay lo-to-save" src="./media/nicole/hair/lob-brown back.png">
+                            <img id="bodies-overlay" class="layer-overlay lo-to-save" src="./media/nicole/bodies/white.png">
+                            <img id="wife-expression" class="layer-overlay lo-to-save" src="./media/nicole/expressions/neutral.png">
+                            <img id="clothes-overlay" class="layer-overlay lo-to-save" src="./media/nicole/clothes/hoodie-green.png">
+                            <img id="wife-hair-front" class="layer-overlay lo-to-save" src="./media/nicole/hair/lob-brown front.png">
+                            <img id="blush-overlay" class="layer-overlay lo-to-save" src="./media/nicole/additional/-blush.png" style="display: none;">
+                            <img id="additional-overlay" class="layer-overlay lo-to-save">
+
+                            <!-- Touchable Areas -->
+                            <div id="touchable-element" class="layer-overlay touchable-element-preset hair"></div>
+                            <div id="touchable-element" class="layer-overlay touchable-element-preset head"></div>
+                            <div id="touchable-element" class="layer-overlay touchable-element-preset neck"></div>
+                            <div id="touchable-element" class="layer-overlay touchable-element-preset body"></div>
+                        </div>
+                    </div>
+
+                    <!-- ================================================================== -->
+                    <!-- User Input + Buttons -->
+                    <!-- ================================================================== -->
+                    <textarea id="user-input" type="text" placeholder="Type your message..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+
+                    <div class="button-row">
+                        <button id="send-btn">Send</button>
+                        |
+                        <button id="save-memory-btn">Save chat</button>
+                        <button id="load-memory-btn">Load chat</button>
+                        <button id="delete-memory-btn">Restart chat</button>
+                        |
+                        <button id="instructions-editor-btn">Instructions</button>
+                        <button id="avatar-editor-btn">Avatar</button>
+                        <button id="memo-editor-btn">Memo</button>
+                        |
+                        <button id="customize-btn">Customize</button>
+                        <button id="tech-details-btn">Settings</button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td>
+                <pre class="centered color">
+   へ     ╱|、
+૮ - ՛ )   (` - 7
+乀(ˍ,ل ل    じしˍ,)ノ
+<i>At least someone loves you...</i>
+                </pre>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+</body>
+</html>
