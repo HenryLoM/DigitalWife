@@ -2,17 +2,18 @@
 > ❗️ Also known as Nicole or Object-10
 
 ## 📑 Table of Contents
-- [✨ Overview](#✨-overview)
-- [🎬 Launching Process](#🎬-launching-process)
-- [📂 Project Structure](#📂-project-structure)
-- [🖥️ HTML Pages](#️🖥️-html-pages)
-- [⚙️ Core Scripts](#️⚙️-core-scripts)
+- [✨ Overview](#-overview)
+- [🎬 Launching Process](#-launching-process)
+- [📂 Project Structure](#-project-structure)
+- [🖥️ HTML Pages](#️-html-pages)
+- [⚙️ Core Scripts](#️-core-scripts)
     - [ai.js](#aijs)
+    - [emotion-ai.js](#emotion-aijs)
     - [customization-popup.js](#customization-popupjs)
-- [🎨 Assets](#🎨-assets)
-- [💾 Memory System](#💾-memory-system)
-- [🛠️ Settings & Customization](#️🛠️-settings--customization)
-- [📜 Notes](#📜-notes)
+- [🎨 Assets](#-assets)
+- [💾 Memory System](#-memory-system)
+- [🛠️ Settings & Customization](#️-settings--customization)
+- [📜 Notes](#-notes)
 
 ---
 
@@ -145,6 +146,25 @@ Handles all **AI interactions and memory**.
 
 ---
 
+### **emotion-ai.js**
+Handles **emotion inference** based on chat text. This script directly affects which **expression sprite** is displayed and whether the **blush overlay** is active.
+- ✍️ Uses a rewritten **local version of VADER sentiment analysis** (`vader-sentiment.js`).
+- 🍅 Detects **blush state** if certain keywords appear (e.g. “blush”, “awkward”, “embarrassed”, etc).
+- ↩️ Returns both:
+    - **Emotion label** (happy, smile, annoyed, angry, sad, neutral).
+    - **Blush flag** (true/false).
+- 📊 Sentiment thresholds:
+    - `≥ 0.8` → happy 2
+    - `≥ 0.6` → happy 1
+    - `≥ 0.5` → smile 2
+    - `≥ 0.3` → smile 1
+    - `≥ 0.1` → neutral
+    - `≥ -0.2` → annoyed
+    - `≥ -0.4` → angry
+    - `≥ -0.6` → sad
+
+---
+
 ### **customization-popup.js**
 Manages **character customization popup**.
 - 👇 Opens with `Customize` button.
@@ -165,25 +185,6 @@ Manages **character customization popup**.
     - Saves to localStorage.
 
 - 🫷 Includes **close button** and smooth transitions.
-
----
-
-### **emotion-ai.js**
-Handles **emotion inference** based on chat text. This script directly affects which **expression sprite** is displayed and whether the **blush overlay** is active.
-- ✍️ Uses a rewritten **local version of VADER sentiment analysis** (`vader-sentiment.js`).
-- 🍅 Detects **blush state** if certain keywords appear (e.g. “blush”, “awkward”, “embarrassed”, etc).
-- ↩️ Returns both:
-    - **Emotion label** (happy, smile, annoyed, angry, sad, neutral).
-    - **Blush flag** (true/false).
-- 📊 Sentiment thresholds:
-    - `≥ 0.8` → happy 2
-    - `≥ 0.6` → happy 1
-    - `≥ 0.5` → smile 2
-    - `≥ 0.3` → smile 1
-    - `≥ 0.1` → neutral
-    - `≥ -0.2` → annoyed
-    - `≥ -0.4` → angry
-    - `≥ -0.6` → sad
 
 ---
 

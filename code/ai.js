@@ -131,7 +131,6 @@ async function handleAiResponse(userInput, allowPartialSave = true) {
         { role: "system", content: `::PREVIOUS MESSAGES::\n${chatHistory}`     },
         { role: "user",   content: userInput                                   }
     ];
-    console.log(fullMessagePayload)
     // Add user data into HTML div element and memory, synching the indexes
     appendMessage(userName, userInput, currentIndex);
     addToMemory("user", userInput);
