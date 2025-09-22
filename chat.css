@@ -279,8 +279,9 @@ input:focus {
     border-radius: 50%;
 }
 
-.change-ai-button-preset {
-    right: 160px;
+.info-button-preset {
+    border-radius: 180px;
+    width: 31px;
 }
 
 /* ========== JS presets ========== */

@@ -166,11 +166,12 @@ async function handleAiResponse(userInput, allowPartialSave = true) {
  * @returns {void}
  */
 function deleteMessageByIndex(indexToDelete) {
-    memory = memory.filter(msg => msg.index !== indexToDelete);                           // Remove the message with the exact index from memory
+    memory = memory.filter(msg => msg.index !== indexToDelete);                              // Remove the message with the exact index from memory
     const chatContent = document.getElementById(chattingContent);
-    const messages = [...chatContent.getElementsByClassName("message-frame-preset")];   //   Remove DOM element with matching dataset index
-    messages.find(elem => parseInt(elem.dataset.index) === indexToDelete)?.remove();   //    Remove message from HTML page
-    console.log(`[☂ LOG ☂ DELETION ☂] — Message with index ${indexToDelete} deleted.`);          //     LOGGING: Log
+    const messages = [...chatContent.getElementsByClassName("message-frame-preset")];      //   Remove DOM element with matching dataset index
+    messages.find(elem => parseInt(elem.dataset.index) === indexToDelete)?.remove();      //    Remove message from HTML page
+    saveMemoryToLocalStorage();
+    console.log(`[☂ LOG ☂ DELETION ☂] — Message with index ${indexToDelete} deleted.`); //      LOGGING: Log
 }
 
 /**
@@ -192,6 +193,7 @@ function rewindMessages(targetIndex) {
             chatContent.removeChild(elem);
         }
     });
+    saveMemoryToLocalStorage();
     console.log(`[☂ LOG ☂ REFRESH ☂] — All messages up to index ${targetIndex} (including) deleted.`);  // LOGGING: Log
 }
 
@@ -263,6 +265,31 @@ function copyText(index) {
 // ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== Memory working
 
 /**
+ * Saves the entire chat memory into localStorage.
+ *
+ * @returns {void}
+ */
+function saveMemoryToLocalStorage() {
+    localStorage.setItem("chatMemory", JSON.stringify(memory));
+}
+
+/**
+ * Loads the chat memory from localStorage and rebuilds the chat DOM.
+ *
+ * @returns {void}
+ */
+function loadMemoryFromLocalStorage() {
+    const saved = localStorage.getItem("chatMemory");
+    if (!saved) return;
+    memory = JSON.parse(saved);
+    currentIndex = memory.length > 0 ? memory[memory.length - 1].index + 1 : 0;
+    // Rebuild chat DOM
+    memory.forEach(msg => {
+        appendMessage(msg.role === "user" ? userName : aiName, msg.content, msg.index);
+    });
+}
+
+/**
  * Adds required messages into the memory creating and pushing hash table.
  * 
  * @param {string} role    - The role of the sender.
@@ -276,6 +303,7 @@ function addToMemory(role, content) {
         content: content
     });
     currentIndex++;
+    saveMemoryToLocalStorage();
 }
 
 /**
@@ -288,6 +316,7 @@ function addToMemory(role, content) {
 function updateMemory(index, content) {
     const msg = memory.find(m => m.index === index);
     if (msg) msg.content = content;
+    saveMemoryToLocalStorage();
 }
 
 /**
@@ -297,11 +326,13 @@ function updateMemory(index, content) {
  */
 function clearMemory() {
     memory = [];
-    const chatContent = document.getElementById(chattingContent);              // Search the div element with all the messages
-    chatContent.innerHTML = "";                                               //  Clear the div element
-    currentIndex = 0;                                                        //   Reset index system
-    document.getElementById(titleInputField).value = "";                    //    Reset the memory name
-    console.log("[☂ LOG ☂ MEMORY ☂] — Memory cleared.");                   //     LOGGING: Log
+    const chatContent = document.getElementById(chattingContent);               // Search the div element with all the messages
+    chatContent.innerHTML = "";                                                //  Clear the div element
+    currentIndex = 0;                                                         //   Reset index system
+    document.getElementById(titleInputField).value = "";                     //    Reset the memory name
+    localStorage.removeItem("chatMemory");                                  //     Remove saved memory from localStorage
+    saveMemoryToLocalStorage();                                            //      Sync localStorage
+    console.log("[☂ LOG ☂ MEMORY ☂] — Memory cleared.");                  //       LOGGING: Log
     // Return previous scroll height
     const chatWindow = document.getElementById(chattingWindow);
     chatWindow.scrollTop = 0;
@@ -478,6 +509,30 @@ function saveEditor() {
 }
 
 /**
+ * Shows contextual help text inside the editor popup.
+ * 
+ * @param {string} type - Which file is being edited ("instructions", "avatar", or "recollection").
+ * @returns {void}
+ */
+function showEditorInfo(type) {
+    let message = "";
+    switch (type) {
+        case "instructions":
+            message = "AI instructions:\n\nWrite rules and behavior guidelines for the AI - its character and role.\nHighly recommend to describe how AI must respond for a better RP perfomance.";
+            break;
+        case "avatar":
+            message = "User's avatar:\n\nDescribe yourself, AI will treat everything you describe as your image.";
+            break;
+        case "recollection":
+            message = "Recollection/Memo:\n\nWrite notes or important memories to keep context long-term.\nEverything you describe here will be remembered by the AI.";
+            break;
+        default:
+            message = "Popup is not openned, you are not supposed to see this message";
+    }
+    alert(message);
+}
+
+/**
  * Limits the available amount of characters when editing the chosen file
  * 
  * @returns {void}
@@ -561,180 +616,192 @@ function TechEditor() {
     document.getElementById("tech-cancel-btn").onclick = function() {
         closeTechEditor();
     };
-
     // Export setup logic
-    document.getElementById("tech-export-btn").onclick = function() {
-        // Define label mapping based on order of appearanceData
-        const labelMap = {
-            body:       window.appearanceData[0],
-            hair:       window.appearanceData[2],
-            clothes:    window.appearanceData[3],
-            place:      window.appearanceData[4],
-            extra:      window.appearanceData[5],
-            eyes:       window.appearanceData[1] || "Purple",
-            expression: null,  // always null
-            blush:      null  // always null
-        };
-        // Map overlay IDs to appearanceData keys
-        const idToLabelKey = {
-            "bodies-overlay":     "body",
-            "wife-hair-back":     "hair",
-            "wife-hair-front":    "hair",
-            "clothes-overlay":    "clothes",
-            "background":         "place",
-            "additional-overlay": "extra",
-            "wife-expression":    "expression",
-            "blush-overlay":      "blush"
-        };
-
-        // Collect overlays (images + divs) from the DOM
-        let overlays = Array.from(document.querySelectorAll(".lo-to-save")).map(el => {
-            const key = idToLabelKey[el.id];
-            const label = key ? labelMap[key] : null;
-
-            return {
-                id: el.id,
-                src: el.tagName.toLowerCase() === "img" ? el.getAttribute("src") : null,
-                style: el.getAttribute("style") || null,
-                class: el.getAttribute("class") || null,
-                label: label
-            };
-        });
-
-        // Base setup (original fields)
-        const setup = {
-            aiName:         localStorage.getItem("aiName")       || aiName,
-            model:          localStorage.getItem("ollama_model") || model,
-            port:           localStorage.getItem("ollama_port")  || port,
-            instructions:   localStorage.getItem("instructions") || instructions,
-            avatar:         localStorage.getItem("avatar")       || avatar,
-            recollection:   localStorage.getItem("recollection") || recollection,
-            appearanceData: window.appearanceData                || [],
-            overlays:       overlays
-        };
-
-        // Export JSON
-        const json = JSON.stringify(setup, null, 2);
-        const blob = new Blob([json], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${setup.aiName || "AI"}'s setup.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        console.log(`[☂ LOG ☂ EXPORT ☂] — Setup exported as ${a.download}.`);
-    };
-
+    document.getElementById("tech-export-btn").onclick = exportPresetFile;
     // Import setup logic
-    document.getElementById("tech-import-btn").onclick = function() {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = ".json,application/json";
-        input.onchange = async (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-            try {
-                const text = await file.text();
-                const setup = JSON.parse(text);
-
-                // Restore basic settings
-                if (setup.aiName) {
-                    localStorage.setItem("aiName", setup.aiName);
-                    aiName = setup.aiName;
-                }
-                if (setup.model) {
-                    localStorage.setItem("ollama_model", setup.model);
-                    model = setup.model;
-                }
-                if (setup.port) {
-                    localStorage.setItem("ollama_port", setup.port);
-                    port = setup.port;
-                }
-                if (setup.instructions) {
-                    localStorage.setItem("instructions", setup.instructions);
-                    instructions = setup.instructions;
-                }
-                if (setup.avatar) {
-                    localStorage.setItem("avatar", setup.avatar);
-                    avatar = setup.avatar;
-                }
-                if (setup.recollection) {
-                    localStorage.setItem("recollection", setup.recollection);
-                    recollection = setup.recollection;
-                }
-
-                // Restore overlays
-                if (setup.overlays && Array.isArray(setup.overlays)) {
-                    setup.overlays.forEach(layer => {
-                        const el = document.getElementById(layer.id);
-                        if (el) {
-                            if (layer.src && el.tagName.toLowerCase() === "img") {
-                                el.setAttribute("src", layer.src);
-                            }
-                            if (layer.style) {
-                                el.setAttribute("style", layer.style);
-                            }
-                            if (layer.class) {
-                                el.setAttribute("class", layer.class);
-                            }
-                        }
-                    });
-                }
-
-                // Restore appearanceData
-                if (setup.appearanceData && Array.isArray(setup.appearanceData)) {
-                    window.appearanceData = setup.appearanceData;
-
-                    // Update selected* globals
-                    selectedBody    = setup.appearanceData[0] || null;
-                    selectedEyes    = setup.appearanceData[1] || null;
-                    selectedHair    = setup.appearanceData[2] || null;
-                    selectedClothes = setup.appearanceData[3] || null;
-                    selectedPlace   = setup.appearanceData[4] || null;
-                    selectedExtra   = setup.appearanceData[5] || null;
-
-                    // Rebuild appearanceContext properly
-                    window.updateAppearanceContext();
-                }
-
-                // Build appearanceContext
-                if (window.appearanceData) {
-                    const [body, eyes, hair, clothes, place, extra] = window.appearanceData;
-
-                    let contextLines = [];
-                    if (body) contextLines.push(`You have ${body} skin`);
-                    if (eyes) contextLines.push(`You have ${eyes} eyes`);
-                    if (hair) contextLines.push(`You have ${hair} hair`);
-                    if (clothes) contextLines.push(`You wear ${clothes}`);
-                    if (place) contextLines.push(`You are in ${place}`);
-                    if (extra) contextLines.push(`Extra: ${extra}`);
-
-                    window.appearanceContext = contextLines.join("\n");
-                }
-
-                // Update UI title
-                document.getElementById("title-input").placeholder = `${aiName}'s room`;
-                console.log(`[☂ LOG ☂ IMPORT ☂] — Setup imported from ${file.name}.`);
-                closeTechEditor();
-            } catch (err) {
-                console.error("[⚙ ERROR ⚙] — Failed to import setup:", err);
-            }
-        };
-        input.click();
-    };
+    document.getElementById("tech-import-btn").onclick = importPresetFile;
 }
 
 /**
  * Closes TechEditor popup.
+ * 
+ * @returns {void}
  */
 function closeTechEditor() {
     const popup = document.getElementById("tech-editor-popup");
     if (popup) {
         popup.style.display = "none";
     }
+}
+
+/**
+ * Exports the current setup as a JSON file.
+ * 
+ * @returns {void}
+ */
+function exportPresetFile() {
+    // Define label mapping based on order of appearanceData
+    const labelMap = {
+        body:       window.appearanceData[0],
+        hair:       window.appearanceData[2],
+        clothes:    window.appearanceData[3],
+        place:      window.appearanceData[4],
+        extra:      window.appearanceData[5],
+        eyes:       window.appearanceData[1] || "Purple",
+        blush:      null  // always null
+    };
+    // Map overlay IDs to appearanceData keys
+    const idToLabelKey = {
+        "bodies-overlay":     "body",
+        "wife-hair-back":     "hair",
+        "wife-hair-front":    "hair",
+        "clothes-overlay":    "clothes",
+        "background":         "place",
+        "additional-overlay": "extra",
+        "blush-overlay":      "blush"
+    };
+
+    // Collect overlays (images + divs) from the DOM
+    let overlays = Array.from(document.querySelectorAll(".lo-to-save")).map(el => {
+        const key = idToLabelKey[el.id];
+        const label = key ? labelMap[key] : null;
+
+        return {
+            id: el.id,
+            src: el.tagName.toLowerCase() === "img" ? el.getAttribute("src") : null,
+            style: el.getAttribute("style") || null,
+            class: el.getAttribute("class") || null,
+            label: label
+        };
+    });
+
+    // Base setup (original fields)
+    const setup = {
+        aiName:         localStorage.getItem("aiName")       || aiName,
+        model:          localStorage.getItem("ollama_model") || model,
+        port:           localStorage.getItem("ollama_port")  || port,
+        instructions:   localStorage.getItem("instructions") || instructions,
+        avatar:         localStorage.getItem("avatar")       || avatar,
+        recollection:   localStorage.getItem("recollection") || recollection,
+        appearanceData: window.appearanceData                || [],
+        overlays:       overlays
+    };
+
+    // Export JSON
+    const json = JSON.stringify(setup, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${setup.aiName || "AI"}'s setup.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    console.log(`[☂ LOG ☂ EXPORT ☂] — Setup exported as ${a.download}.`);
+}
+
+/**
+ * Imports the setup from a JSON file.
+ * 
+ * @returns {void}
+ */
+export function importPresetFile() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,application/json";
+    input.onchange = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        try {
+            const text = await file.text();
+            const setup = JSON.parse(text);
+
+            // Restore basic settings
+            if (setup.aiName) {
+                localStorage.setItem("aiName", setup.aiName);
+                aiName = setup.aiName;
+            }
+            if (setup.model) {
+                localStorage.setItem("ollama_model", setup.model);
+                model = setup.model;
+            }
+            if (setup.port) {
+                localStorage.setItem("ollama_port", setup.port);
+                port = setup.port;
+            }
+            if (setup.instructions) {
+                localStorage.setItem("instructions", setup.instructions);
+                instructions = setup.instructions;
+            }
+            if (setup.avatar) {
+                localStorage.setItem("avatar", setup.avatar);
+                avatar = setup.avatar;
+            }
+            if (setup.recollection) {
+                localStorage.setItem("recollection", setup.recollection);
+                recollection = setup.recollection;
+            }
+
+            // Restore overlays
+            if (setup.overlays && Array.isArray(setup.overlays)) {
+                setup.overlays.forEach(layer => {
+                    const el = document.getElementById(layer.id);
+                    if (el) {
+                        if (layer.src && el.tagName.toLowerCase() === "img") {
+                            el.setAttribute("src", layer.src);
+                        }
+                        if (layer.style) {
+                            el.setAttribute("style", layer.style);
+                        }
+                        if (layer.class) {
+                            el.setAttribute("class", layer.class);
+                        }
+                    }
+                });
+            }
+
+            // Restore appearanceData
+            if (setup.appearanceData && Array.isArray(setup.appearanceData)) {
+                window.appearanceData = setup.appearanceData;
+
+                // Update selected* globals
+                selectedBody    = setup.appearanceData[0] || null;
+                selectedEyes    = setup.appearanceData[1] || null;
+                selectedHair    = setup.appearanceData[2] || null;
+                selectedClothes = setup.appearanceData[3] || null;
+                selectedPlace   = setup.appearanceData[4] || null;
+                selectedExtra   = setup.appearanceData[5] || null;
+
+                // Rebuild appearanceContext properly
+                window.updateAppearanceContext();
+            }
+
+            // Build appearanceContext
+            if (window.appearanceData) {
+                const [body, eyes, hair, clothes, place, extra] = window.appearanceData;
+
+                let contextLines = [];
+                if (body) contextLines.push(`You have ${body} skin`);
+                if (eyes) contextLines.push(`You have ${eyes} eyes`);
+                if (hair) contextLines.push(`You have ${hair} hair`);
+                if (clothes) contextLines.push(`You wear ${clothes}`);
+                if (place) contextLines.push(`You are in ${place}`);
+                if (extra) contextLines.push(`Extra: ${extra}`);
+
+                window.appearanceContext = contextLines.join("\n");
+            }
+
+            // Update UI title
+            document.getElementById("title-input").placeholder = `${aiName}'s room`;
+            console.log(`[☂ LOG ☂ IMPORT ☂] — Setup imported from ${file.name}.`);
+            closeTechEditor();
+        } catch (err) {
+            console.error("[⚙ ERROR ⚙] — Failed to import setup:", err);
+        }
+    };
+    input.click();
 }
 
 // ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== Editing message working
@@ -813,6 +880,7 @@ function applyEditingMessage(index, newText, sender) {
     }
     // Update the message without harming anything else
     updateMemory(index, newText);
+    saveMemoryToLocalStorage();
 }
 
 /**
@@ -938,7 +1006,6 @@ function restoreAppearanceLayers() {
     const layers = [
         "wife-hair-back",
         "bodies-overlay",
-        "wife-expression",
         "clothes-overlay",
         "wife-hair-front",
         "blush-overlay",
@@ -965,7 +1032,6 @@ function saveAppearanceLayers() {
     const layers = [
         "wife-hair-back",
         "bodies-overlay",
-        "wife-expression",
         "clothes-overlay",
         "wife-hair-front",
         "blush-overlay",
@@ -988,6 +1054,7 @@ function saveAppearanceLayers() {
  */
 async function initializeContext() {
     // Load from localStorage if available, else from file
+    loadMemoryFromLocalStorage();
     const loadFile = async (path, key) => {
         let value = localStorage.getItem(key);
         if (value !== null) return value;
@@ -1023,25 +1090,25 @@ document.addEventListener("DOMContentLoaded", () => {
         memoryName = input.value.trim() || input.placeholder.trim();
     });
     // Message group
-    document.getElementById("send-btn").addEventListener(               "click", sendMessageButton                  );
-    document.getElementById("force-shut-btn").addEventListener(         "click", forceShut                          );
+    document.getElementById("send-btn").addEventListener(               "click", sendMessageButton                         );
+    document.getElementById("force-shut-btn").addEventListener(         "click", forceShut                                 );
     // Memory group
-    document.getElementById("save-memory-btn").addEventListener(        "click", saveMemoryToFile                   );
-    document.getElementById("load-memory-btn").addEventListener(        "click", loadMemoryFromFile                 );
-    document.getElementById("delete-memory-btn").addEventListener(      "click", clearMemory                        );
+    document.getElementById("save-memory-btn").addEventListener(        "click", saveMemoryToFile                          );
+    document.getElementById("load-memory-btn").addEventListener(        "click", loadMemoryFromFile                        );
+    document.getElementById("delete-memory-btn").addEventListener(      "click", clearMemory                               );
     // File group
-    document.getElementById("editor-save-btn").addEventListener(        "click", saveEditor                         );
-    document.getElementById("editor-close-btn").addEventListener(       "click", closeEditor                        );
-    document.getElementById("instructions-editor-btn").addEventListener("click", () => {openEditor("instructions");});
-    document.getElementById("avatar-editor-btn").addEventListener(      "click", () => {openEditor("avatar");}      );
-    document.getElementById("memo-editor-btn").addEventListener(        "click", () => {openEditor("recollection");});
+    document.getElementById("editor-save-btn").addEventListener(        "click", saveEditor                                );
+    document.getElementById("editor-close-btn").addEventListener(       "click", closeEditor                               );
+    document.getElementById("editor-info-btn").addEventListener(        "click", () => {showEditorInfo(lastEditingObject);});
+    document.getElementById("instructions-editor-btn").addEventListener("click", () => {openEditor("instructions");}       );
+    document.getElementById("avatar-editor-btn").addEventListener(      "click", () => {openEditor("avatar");}             );
+    document.getElementById("memo-editor-btn").addEventListener(        "click", () => {openEditor("recollection");}       );
     // Full AI customization one-button-group
-    document.getElementById("tech-details-btn").addEventListener(       "click", () => {TechEditor();}              );
+    document.getElementById("tech-details-btn").addEventListener(       "click", () => {TechEditor();}                     );
     // Setup auto-save for appearance layers when changed
     const layerIds = [
         "wife-hair-back",
         "bodies-overlay",
-        "wife-expression",
         "clothes-overlay",
         "wife-hair-front",
         "blush-overlay",

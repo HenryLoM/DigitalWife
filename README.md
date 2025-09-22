@@ -8,12 +8,13 @@
 - [🖥️ HTML Pages](#️-html-pages)
 - [⚙️ Core Scripts](#️-core-scripts)
     - [ai.js](#aijs)
-    - [emotion-ai.js](#emotion-aijs)
+    - [emotion-ai.js](#emotion-ai.js)
     - [customization-popup.js](#customization-popupjs)
 - [🎨 Assets](#-assets)
 - [💾 Memory System](#-memory-system)
 - [🛠️ Settings & Customization](#️-settings--customization)
 - [📜 Notes](#-notes)
+- [🏙️ Screenshorts](#-screenshots)
 
 ---
 
@@ -69,6 +70,7 @@ Wife/
 │
 ├── code/
 │ ├── ai.js                   # Core AI logic
+│ ├── emotion-ai.js           # Detector of responce's emotional context
 │ ├── customization-popup.js  # Appearance customization popup
 │ ├── mixer.js                # Extra AI/logic features
 │ ├── vader-sentiment.js      # Sentiment analyzer
@@ -105,10 +107,10 @@ Wife/
     - Technical settings (model, port, overlays).
 
 ### **homepage.html**
-- Introduction and navigation to **Chat** and **Logs**.
+- Introduction and navigation.
 
 ### **log.html**
-- Notes on updates / last modified date.
+- Notes on updates.
 
 ---
 
@@ -221,3 +223,10 @@ Manages **character customization popup**.
 - Default model: `"NicoleShelterV1"`.
 - Uses **localStorage** to persist appearance, avatar, and AI memory across sessions.
 - Chat controls include refresh, edit, delete, copy for fine-grained conversation control.
+
+## 🏙️ Screenshorts
+![screen of chat page](./media/screenshots/chat.png?raw=true)
+<p style="color: #6a6a6a; text-align: center; margin: -1.5em 0 0 0;">Chat explanation</p>
+
+![screen of settings menu](./media/screenshots/settings.png?raw=true)
+<p style="color: #6a6a6a; text-align: center; margin: -1.5em 0 0 0;">Settings explanation</p>
