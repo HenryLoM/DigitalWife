@@ -24,6 +24,7 @@ DigitalWife is a **browser-based virtual companion** built around:
 - Chat system with memory and logs.
 - A layered sprite system (character, clothes, expressions, places).
 - Popup-driven customization for character appearance and technical settings.
+- Arduino working robotic parts (*in process*)
 
 ---
 
@@ -69,35 +70,38 @@ DigitalWife/
 ├── favicon.ico
 │
 ├── pages/
-│ ├── homepage.html           # Landing page
-│ ├── chat.html               # Main chat interface
-│ ├── log.html                # Logs / update notes
-│ └── chat.css                # Styling
+│ ├── homepage.html            # Landing page
+│ ├── chat.html                # Main chat interface
+│ ├── log.html                 # Logs / update notes
+│ └── chat.css                 # Styling
 │
 ├── code/
-│ ├── ai.js                   # Core AI logic
-│ ├── emotion-ai.js           # Detector of responce's emotional context
-│ ├── customization-popup.js  # Appearance customization popup
-│ ├── mixer.js                # Extra AI/logic features
-│ ├── vader-sentiment.js      # Sentiment analyzer
+│ ├── ai.js                    # Core AI logic
+│ ├── emotion-ai.js            # Detector of responce's emotional context
+│ ├── customization-popup.js   # Appearance customization popup
+│ ├── mixer.js                 # Extra AI/logic features
+│ ├── vader-sentiment.js       # Sentiment analyzer
 │ └── files/
-│   ├── instructions.txt      # System prompt / lore
-│   ├── avatar.txt            # User data
-│   ├── recollection.txt      # AI memory
-│   └── touching-phrases.txt  # Prewritten lines
+│   ├── instructions.txt       # System prompt / lore
+│   ├── avatar.txt             # User data
+│   ├── recollection.txt       # AI memory
+│   └── touching-phrases.txt   # Prewritten lines
 │
 ├── media/
-│ ├── screenshots/...         # Demo screenshots
-│ ├── places/...              # Backgrounds (street, park, etc.)
-│ ├── frame/...               # Decorative chat frame
-│ ├── mini-frame/...          # Smaller frame
-│ └── nicole/                 # Character sprites
-│   ├── bodies/...            # Skin tones
-│   ├── clothes/...           # Clothes & uniforms
-│   ├── expressions/...       # Neutral, happy, angry, sad, etc.
-│   └── additional/...        # Accessories (headphones, ribbons, blush)
+│ ├── screenshots/...          # Demo screenshots
+│ ├── places/...               # Backgrounds (street, park, etc.)
+│ ├── frame/...                # Decorative chat frame
+│ ├── mini-frame/...           # Smaller frame
+│ └── nicole/                  # Character sprites
+│   ├── bodies/...             # Skin tones
+│   ├── clothes/...            # Clothes & uniforms
+│   ├── expressions/...        # Neutral, happy, angry, sad, etc.
+│   └── additional/...         # Accessories (headphones, ribbons, blush)
 │
-└── arduino/                  # Empty for now
+├── arduino/
+│   ├── arduino-controller.js  # Signal transfer for Arduino
+│   ├── response-parser.js     # Parser for turning responses to commands
+└
 ```
 
 ---

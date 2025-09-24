@@ -1,26 +1,28 @@
 // ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== Variables
 
 // Custom
-let model            = localStorage.getItem("ollama_model") || "NicoleShelterV1";  // Using LLM
-let port             = localStorage.getItem("ollama_port")  || "11434";           //  Port for streaming AI messaging
-let aiName           = localStorage.getItem("aiName")       || "Nicole";         //   Name of the AI character
-let instructionsPath = "/code/files/instructions.txt";                           //    Path to instructions.txt from the chatting HTML page
-let avatarPath       = "/code/files/avatar.txt";                                //     Path to avatar.txt from the chatting HTML page
-let recollectionPath = "/code/files/recollection.txt";                         //      Path to recollection.txt from the chatting HTML page
-let userName         = "You"                                                 //       Name of user
-let errorMessage     = "(Spouse can't be heard...)"                         //        Eroor messsage to save in memory and display to user
-let trimLimit        = 20;                                                 //         Maximum amount of messages in the AI memory
-let popupLimit       = 700;                                               //          Maximum amount of characters in the popup textarea
+let model            = localStorage.getItem("ollama_model")   || "NicoleShelterV1";  // Using LLM
+let port             = localStorage.getItem("ollama_port")    || "11434";           //  Port for streaming AI messaging
+let aiName           = localStorage.getItem("ai_name")        || "Nicole";         //   Name of the AI character
+let arduinoDevice    = localStorage.getItem("arduino_device") || "disabled";      //    Arduino device path
+let baudRate         = localStorage.getItem("arduino_baud")   || 9600;           //     Baud rate for Arduino communication
+let instructionsPath = "/code/files/instructions.txt";                          //      Path to instructions.txt from the chatting HTML page
+let avatarPath       = "/code/files/avatar.txt";                               //       Path to avatar.txt from the chatting HTML page
+let recollectionPath = "/code/files/recollection.txt";                        //        Path to recollection.txt from the chatting HTML page
+let userName         = "You"                                                 //         Name of user
+let errorMessage     = "(Spouse can't be heard...)"                         //          Eroor messsage to save in memory and display to user
+let trimLimit        = 20;                                                 //           Maximum amount of messages in the AI memory
+let popupLimit       = 700;                                               //            Maximum amount of characters in the popup textarea
 
 // Constant
-let ollamaAbortController = null;                                           // Abortion control via the variable
-let instructions          = localStorage.getItem("instructions") || "";    //  instructions.txt contents in the variable
-let avatar                = localStorage.getItem("avatar")       || "";   //   avatar.txt contents in the variable
-let recollection          = localStorage.getItem("recollection") || "";  //    recollection.txt contents in the variable
-let memory                = [];                                         //     AI memory in an array
-let memoryName            = "";                                        //      Title that uses when memory gets saved
-let lastEditingObject     = "";                                       //       Which file was changing at last
-let currentIndex          = 0;                                       //        Index we use to refer to the message we need
+let ollamaAbortController = null;                                            // Abortion control via the variable
+let instructions          = localStorage.getItem("instructions") || "";    //   instructions.txt contents in the variable
+let avatar                = localStorage.getItem("avatar")       || "";   //    avatar.txt contents in the variable
+let recollection          = localStorage.getItem("recollection") || "";  //     recollection.txt contents in the variable
+let memory                = [];                                         //      AI memory in an array
+let memoryName            = "";                                        //       Title that uses when memory gets saved
+let lastEditingObject     = "";                                       //        Which file was changing at last
+let currentIndex          = 0;                                      //          Index we use to refer to the message we need
 
 // HTML id tagging
 const titleInputField    = "title-input";         // Name of the chat
@@ -154,9 +156,10 @@ async function handleAiResponse(userInput, allowPartialSave = true) {
     } catch (err) {
         if (err.name === 'AbortError' && allowPartialSave) updateMemory(aiIndex, aiMessage);
     }
-    // Do some settings
-    trimMemory();
-    console.log("[☂ LOG ☂ MEMORY ☂] — Memory updated.");  // LOGGING: Log
+    // Finalize some settings
+    trimMemory();                                                                                              // Trim memory if it is too long
+    if (window.isArduino) import("../arduino/response-parser.js").then(({ parse }) => { parse(aiMessage); })  //  Send to Arduino if enabled
+    console.log("[☂ LOG ☂ MEMORY ☂] — Memory updated.");                                                     //   LOGGING: Log
 }
 
 /**
@@ -587,6 +590,12 @@ function TechEditor() {
         <label for="tech-port-input">Ollama port (don't recommend to edit):</label><br>
         <input id="tech-port-input" type="text" value="${port}" style="width:100%;margin-bottom:12px;" placeholder="default is 11434"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><br>
+        <label for="tech-arduino-input">Arduino Path:</label><br>
+        <input id="tech-arduino-input" type="text" value="${arduinoDevice}" style="width:100%;margin-bottom:12px;" placeholder="no need to change if you do not use Arduino"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><br>
+        <label for="tech-baud-input">Arduino Baud Rate:</label><br>
+        <input id="tech-baud-input" type="text" value="${baudRate}" style="width:100%;margin-bottom:12px;" placeholder="baud rate of your arduino, 9600 for most"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><br>
         <button id="tech-save-btn">Save</button>
         <button id="tech-cancel-btn">Cancel</button>
         <button id="tech-export-btn">Export setup</button>
@@ -598,18 +607,24 @@ function TechEditor() {
 
     // Save logic
     document.getElementById("tech-save-btn").onclick = function() {
-        const newName = document.getElementById("tech-aiName-input").value;
-        const newModel = document.getElementById("tech-model-input").value;
-        const newPort = document.getElementById("tech-port-input").value;
-        localStorage.setItem("aiName", newName);
+        const newName    = document.getElementById("tech-aiName-input").value;
+        const newModel   = document.getElementById("tech-model-input").value;
+        const newPort    = document.getElementById("tech-port-input").value;
+        const newArduino = document.getElementById("tech-arduino-input").value;
+        const newBaud    = document.getElementById("tech-baud-input").value;
+        localStorage.setItem("ai_name", newName);
         localStorage.setItem("ollama_model", newModel);
         localStorage.setItem("ollama_port", newPort);
+        localStorage.setItem("arduino_device", newArduino);
+        localStorage.setItem("arduino_baud", newBaud);
         aiName = newName;
         model = newModel;
         port = newPort;
+        arduinoDevice = newArduino;
+        baudRate = newBaud;
         closeTechEditor();
         document.getElementById("title-input").placeholder = `${aiName}'s room`;  // Dynamically update placeholder's text
-        console.log("[☂ LOG ☂ EDITING ☂] — The technical settings updated.");    // LOGGING: Log
+        console.log(" — The technical settings updated.");    // LOGGING: Log
     };
 
     // Cancel logic
@@ -677,13 +692,15 @@ function exportPresetFile() {
 
     // Base setup (original fields)
     const setup = {
-        aiName:         localStorage.getItem("aiName")       || aiName,
-        model:          localStorage.getItem("ollama_model") || model,
-        port:           localStorage.getItem("ollama_port")  || port,
-        instructions:   localStorage.getItem("instructions") || instructions,
-        avatar:         localStorage.getItem("avatar")       || avatar,
-        recollection:   localStorage.getItem("recollection") || recollection,
-        appearanceData: window.appearanceData                || [],
+        aiName:         localStorage.getItem("aiName")         || aiName,
+        model:          localStorage.getItem("ollama_model")   || model,
+        port:           localStorage.getItem("ollama_port")    || port,
+        arduinoDevice:  localStorage.getItem("arduino_device") || arduinoDevice,
+        baudRate:       localStorage.getItem("arduino_baud")   || baudRate,
+        instructions:   localStorage.getItem("instructions")   || instructions,
+        avatar:         localStorage.getItem("avatar")         || avatar,
+        recollection:   localStorage.getItem("recollection")   || recollection,
+        appearanceData: window.appearanceData                  || [],
         overlays:       overlays
     };
 
@@ -707,7 +724,7 @@ function exportPresetFile() {
  * 
  * @returns {void}
  */
-export function importPresetFile() {
+function importPresetFile() {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json,application/json";
@@ -730,6 +747,14 @@ export function importPresetFile() {
             if (setup.port) {
                 localStorage.setItem("ollama_port", setup.port);
                 port = setup.port;
+            }
+            if (setup.arduinoDevice) {
+                localStorage.setItem("arduino_device", setup.arduinoDevice);
+                arduinoDevice = setup.arduinoDevice;
+            }
+            if (setup.baudRate) {
+                localStorage.setItem("arduino_baud", setup.baudRate);
+                baudRate = setup.baudRate;
             }
             if (setup.instructions) {
                 localStorage.setItem("instructions", setup.instructions);

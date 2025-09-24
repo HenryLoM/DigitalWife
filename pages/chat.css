@@ -441,8 +441,9 @@ input:focus {
     margin-left: auto;
 }
 
-/* ========== ========== ========== THEME SWITCHER ========== ========== ========== */
+/* ========== ========== ========== THEME & ARDUINO SWITCHER ========== ========== ========== */
 
+#arduino-switcher,
 #theme-switcher {
     position: fixed;
     top: 30px;
@@ -450,7 +451,11 @@ input:focus {
     z-index: 1000;
     transition: all 0.3s ease;
 }
+#arduino-switcher {
+    top: 75px;
+}
 
+.arduino-toggle,
 .theme-toggle {
     width: 60px;
     height: 30px;
@@ -461,6 +466,7 @@ input:focus {
     cursor: pointer;
 }
 
+.arduino-toggle-circle,
 .theme-toggle-circle {
     width: 24px;
     height: 24px;
@@ -477,7 +483,13 @@ input:focus {
     font-size: 16px;
 }
 
+/* Theme switcher animation */
 .theme-toggle.dark .theme-toggle-circle {
+    left: 33px;
+}
+
+/* Arduino switcher animation */
+.arduino-toggle.on .arduino-toggle-circle {
     left: 33px;
 }
 
