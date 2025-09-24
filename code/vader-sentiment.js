@@ -1,6 +1,6 @@
 /**
- Personally rewrited version of VADER Sentiment Analysis in the purest JavaScript, so there is no need in node.js
- Emojy and soc.medea slang support were removed
+ Rewrited version of VADER Sentiment Analysis in the purest JavaScript, so there is no need in node.js
+ Emoji and social media slang support were removed
  Original code: https://github.com/nimaeskandary/vaderSentiment-js
  */
 
@@ -142,7 +142,7 @@ const vader = (() => {
             sortof: B_DECR,
             'sort-of': B_DECR
         },
-        // A minimal sentiment lexicon example; you'll replace this with your full 7k+ dictionary
+        // Sentiment lexicon
         SENTIMENT_Lexicon: {
             '$:': -1.5,
             '%)': -0.4,
@@ -7684,14 +7684,14 @@ const vader = (() => {
             const windowStart = Math.max(0, i - 3);
             const negated = words.slice(windowStart, i).some(isNegated);
             if (negated) {
-                valence *= constants.N_SCALAR; // flip valence with scalar
+                valence *= constants.N_SCALAR;  // Flip valence with scalar
             }
 
             sentimentSum += valence;
         }
 
         // Normalize compound score between -1 and 1
-        let compound = sentimentSum / Math.sqrt(sentimentSum * sentimentSum + 15); // simple normalization
+        let compound = sentimentSum / Math.sqrt(sentimentSum * sentimentSum + 15);  // Simple normalization
         if (compound > 1) compound = 1;
         else if (compound < -1) compound = -1;
 

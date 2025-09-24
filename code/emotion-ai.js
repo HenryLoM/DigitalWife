@@ -1,4 +1,4 @@
-import vader from './vader-sentiment.js';  // Custom local version of vader-sentiment
+import vader from '/code/vader-sentiment.js';  // Custom local version of vader-sentiment
 
 const blushedKeywords = new Set([
     "awkward", "bashful", "blush", "blushed", "embarrassed", "flattered", "shy"

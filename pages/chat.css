@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: 'Ubuntu';
-  src: url('media/fonts/Ubuntu-Bold.ttf') format('truetype');
+  src: url('/media/fonts/Ubuntu-Bold.ttf') format('truetype');
 }
 
 /* ========== ========== ========== BASE ========== ========== ========== */
@@ -501,10 +501,10 @@ input:focus {
     z-index: 1000;
     background-size: cover;
 }
-.frame-corner.left-top     { top:    0; left:  0; background-image: url('media/frame/left-top.png');    }
-.frame-corner.right-top    { top:    0; right: 0; background-image: url('media/frame/right-top.png');   }
-.frame-corner.left-bottom  { bottom: 0; left:  0; background-image: url('media/frame/left-bottom.png'); }
-.frame-corner.right-bottom { bottom: 0; right: 0; background-image: url('media/frame/right-bottom.png');}
+.frame-corner.left-top     { top:    0; left:  0; background-image: url('/media/frame/left-top.png');    }
+.frame-corner.right-top    { top:    0; right: 0; background-image: url('/media/frame/right-top.png');   }
+.frame-corner.left-bottom  { bottom: 0; left:  0; background-image: url('/media/frame/left-bottom.png'); }
+.frame-corner.right-bottom { bottom: 0; right: 0; background-image: url('/media/frame/right-bottom.png');}
 
 /* Edges */
 .frame-edge {
@@ -513,10 +513,10 @@ input:focus {
     background-repeat: repeat;
     background-size: contain;
 }
-.frame-edge.top    {top:    0;    left:   64px; right: 64px; height: 64px; background-image: url('media/frame/top.png');   }
-.frame-edge.bottom {bottom: 0;    left:   64px; right: 64px; height: 64px; background-image: url('media/frame/bottom.png');}
-.frame-edge.left   {top:    64px; bottom: 64px; left:  0;    width:  64px; background-image: url('media/frame/left.png');  }
-.frame-edge.right  {top:    64px; bottom: 64px; right: 0;    width:  64px; background-image: url('media/frame/right.png'); }
+.frame-edge.top    {top:    0;    left:   64px; right: 64px; height: 64px; background-image: url('/media/frame/top.png');   }
+.frame-edge.bottom {bottom: 0;    left:   64px; right: 64px; height: 64px; background-image: url('/media/frame/bottom.png');}
+.frame-edge.left   {top:    64px; bottom: 64px; left:  0;    width:  64px; background-image: url('/media/frame/left.png');  }
+.frame-edge.right  {top:    64px; bottom: 64px; right: 0;    width:  64px; background-image: url('/media/frame/right.png'); }
 
 /* ========== ========== ========== MINI-FRAME ========== ========== ========== */
 
@@ -537,10 +537,10 @@ input:focus {
     height: 32px;
     background-size: cover;
 }
-.mini-frame-corner.left-top     { top:    0; left:  0; background-image: url('media/mini-frame/left-top.png');     }
-.mini-frame-corner.right-top    { top:    0; right: 0; background-image: url('media/mini-frame/right-top.png');    }
-.mini-frame-corner.left-bottom  { bottom: 0; left:  0; background-image: url('media/mini-frame/left-bottom.png');  }
-.mini-frame-corner.right-bottom { bottom: 0; right: 0; background-image: url('media/mini-frame/right-bottom.png'); }
+.mini-frame-corner.left-top     { top:    0; left:  0; background-image: url('/media/mini-frame/left-top.png');     }
+.mini-frame-corner.right-top    { top:    0; right: 0; background-image: url('/media/mini-frame/right-top.png');    }
+.mini-frame-corner.left-bottom  { bottom: 0; left:  0; background-image: url('/media/mini-frame/left-bottom.png');  }
+.mini-frame-corner.right-bottom { bottom: 0; right: 0; background-image: url('/media/mini-frame/right-bottom.png'); }
 
 /* Edges */
 .mini-frame-edge {
@@ -548,7 +548,7 @@ input:focus {
     background-repeat: repeat;
     background-size: contain;
 }
-.mini-frame-edge.top    { top:    0;    left:   32px; right: 32px; height: 32px; background-image: url('media/mini-frame/top.png');    }
-.mini-frame-edge.bottom { bottom: 0;    left:   32px; right: 32px; height: 32px; background-image: url('media/mini-frame/bottom.png'); }
-.mini-frame-edge.left   { top:    32px; bottom: 32px; left:  0;    width:  32px; background-image: url('media/mini-frame/left.png');   }
-.mini-frame-edge.right  { top:    32px; bottom: 32px; right: 0;    width:  32px; background-image: url('media/mini-frame/right.png');  }
+.mini-frame-edge.top    { top:    0;    left:   32px; right: 32px; height: 32px; background-image: url('/media/mini-frame/top.png');    }
+.mini-frame-edge.bottom { bottom: 0;    left:   32px; right: 32px; height: 32px; background-image: url('/media/mini-frame/bottom.png'); }
+.mini-frame-edge.left   { top:    32px; bottom: 32px; left:  0;    width:  32px; background-image: url('/media/mini-frame/left.png');   }
+.mini-frame-edge.right  { top:    32px; bottom: 32px; right: 0;    width:  32px; background-image: url('/media/mini-frame/right.png');  }

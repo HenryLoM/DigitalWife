@@ -5,16 +5,16 @@
 - [✨ Overview](#-overview)
 - [🎬 Launching Process](#-launching-process)
 - [📂 Project Structure](#-project-structure)
-- [🖥️ HTML Pages](#️-html-pages)
-- [⚙️ Core Scripts](#️-core-scripts)
+- [🖥️ HTML Pages](#-html-pages)
+- [⚙️ Core Scripts](#-core-scripts)
     - [ai.js](#aijs)
     - [emotion-ai.js](#emotion-ai.js)
     - [customization-popup.js](#customization-popupjs)
 - [🎨 Assets](#-assets)
 - [💾 Memory System](#-memory-system)
-- [🛠️ Settings & Customization](#️-settings--customization)
+- [🛠️ Settings & Customization](#-settings--customization)
 - [📜 Notes](#-notes)
-- [🏙️ Screenshorts](#-screenshots)
+- [📸 Screenshots](#-screenshots)
 
 ---
 
@@ -61,12 +61,18 @@ DigitalWife is a **browser-based virtual companion** built around:
 
 ## 📂 Project Structure
 ```
-Wife/
-├── homepage.html             # Landing page
-├── chat.html                 # Main chat interface
-├── log.html                  # Logs / update notes
-├── chat.css                  # Styling
+DigitalWife/
+│
+├── README.md
+├── LICENSE
+├── .gitignore
 ├── favicon.ico
+│
+├── pages/
+│ ├── homepage.html           # Landing page
+│ ├── chat.html               # Main chat interface
+│ ├── log.html                # Logs / update notes
+│ └── chat.css                # Styling
 │
 ├── code/
 │ ├── ai.js                   # Core AI logic
@@ -90,6 +96,8 @@ Wife/
 │   ├── clothes/...           # Clothes & uniforms
 │   ├── expressions/...       # Neutral, happy, angry, sad, etc.
 │   └── additional/...        # Accessories (headphones, ribbons, blush)
+│
+└── arduino/                  # Empty for now
 ```
 
 ---
@@ -224,9 +232,15 @@ Manages **character customization popup**.
 - Uses **localStorage** to persist appearance, avatar, and AI memory across sessions.
 - Chat controls include refresh, edit, delete, copy for fine-grained conversation control.
 
-## 🏙️ Screenshorts
-![screen of chat page](./media/screenshots/chat.png?raw=true)
-<p style="color: #6a6a6a; text-align: center; margin: -1.5em 0 0 0;">Chat explanation</p>
+---
 
-![screen of settings menu](./media/screenshots/settings.png?raw=true)
-<p style="color: #6a6a6a; text-align: center; margin: -1.5em 0 0 0;">Settings explanation</p>
+## 📸 Screenshots
+![screen of chat page](/media/screenshots/chat.png?raw=true)
+Chat explanation
+
+![screen of settings menu](/media/screenshots/settings.png?raw=true)
+Settings explanation
+
+---
+
+⤴︎ Return to the [📑 Table of Contents](#-table-of-contents) ⤴︎

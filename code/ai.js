@@ -4,9 +4,9 @@
 let model            = localStorage.getItem("ollama_model") || "NicoleShelterV1";  // Using LLM
 let port             = localStorage.getItem("ollama_port")  || "11434";           //  Port for streaming AI messaging
 let aiName           = localStorage.getItem("aiName")       || "Nicole";         //   Name of the AI character
-let instructionsPath = "code/files/instructions.txt";                           //    Path to instructions.txt from the chatting HTML page
-let avatarPath       = "code/files/avatar.txt";                                //     Path to avatar.txt from the chatting HTML page
-let recollectionPath = "code/files/recollection.txt";                         //      Path to recollection.txt from the chatting HTML page
+let instructionsPath = "/code/files/instructions.txt";                           //    Path to instructions.txt from the chatting HTML page
+let avatarPath       = "/code/files/avatar.txt";                                //     Path to avatar.txt from the chatting HTML page
+let recollectionPath = "/code/files/recollection.txt";                         //      Path to recollection.txt from the chatting HTML page
 let userName         = "You"                                                 //       Name of user
 let errorMessage     = "(Spouse can't be heard...)"                         //        Eroor messsage to save in memory and display to user
 let trimLimit        = 20;                                                 //         Maximum amount of messages in the AI memory

@@ -1,6 +1,6 @@
 // ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== Make emotionai.js work along
 
-import { inferEmotion } from "./emotion-ai.js";
+import { inferEmotion } from "/code/emotion-ai.js";
 const observer = new MutationObserver(() => {
     clearTimeout(observer.debounce);
     observer.debounce = setTimeout(() => {
@@ -12,7 +12,7 @@ const observer = new MutationObserver(() => {
             if (content) console.log(`[𖦹 AI Emotion 𖦹] — ${emotion}`);         //  LOGGING: Log (AI Emotion)
             else emotion = "annoyed";                                         //   Make her change expression while her reponse is generating
             if (emotion === "annoyed" && window.isDark) emotion = "-sleepy"  //    Change the type of emotion when theme changed
-            document.getElementById("wife-expression").src = `./media/nicole/expressions/${emotion}.png`;
+            document.getElementById("wife-expression").src = `/media/nicole/expressions/${emotion}.png`;
             const blushOverlay = document.getElementById("blush-overlay");
             if (isBlushed) {
                 blushOverlay.style.display = "block";
@@ -20,7 +20,7 @@ const observer = new MutationObserver(() => {
                 blushOverlay.style.display = "none";
             }
         } else if (!last) {  // If chat is empty
-            document.getElementById("wife-expression").src = "./media/nicole/expressions/neutral.png";
+            document.getElementById("wife-expression").src = "/media/nicole/expressions/neutral.png";
         }
     }, 300);
 });
@@ -42,7 +42,7 @@ let isTooltipActive = false;
 let touchLines = [];
 
 // Load phrases from touching-phrases.txt (once on page load)
-fetch("./code/files/touching-phrases.txt")
+fetch("/code/files/touching-phrases.txt")
     .then(response => response.text())
     .then(data => {
         // Split into lines and remove empty ones
@@ -90,7 +90,7 @@ function setTemporaryEmotion(newEmotion, showBlush = false, duration = 2000) {
     const previousSrc = sprite.src;
     const wasBlushed = blush.style.display === "block";
     // Set up
-    sprite.src = `./media/nicole/expressions/${newEmotion}.png`;
+    sprite.src = `/media/nicole/expressions/${newEmotion}.png`;
     blush.style.display = showBlush ? "block" : "none";
     // Display
     setTimeout(() => {
