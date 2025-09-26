@@ -322,7 +322,7 @@ document.getElementById("customize-btn").addEventListener("click", () => {
             popup.appendChild(additionalSection);
 
         } else if (currentPage === 1) {
-            bodiesSection = createSection("Skin tone", bodiesList, (item) => {
+            bodiesSection = createSection("Skin tones", bodiesList, (item) => {
                 const overlay = document.getElementById("bodies-overlay");
 
                 if (item.path) {

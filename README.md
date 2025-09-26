@@ -1,6 +1,12 @@
 # 💍 DigitalWife
 > ❗️ Also known as Nicole or Object-10
 
+![Repo size](https://img.shields.io/github/repo-size/HenryLoM/DigitalWife?color=lightgrey)
+![Commits](https://img.shields.io/github/commit-activity/t/HenryLoM/DigitalWife/main?color=blue)
+![Last commit](https://img.shields.io/github/last-commit/HenryLoM/DigitalWife?color=informational)
+![Latest release](https://img.shields.io/github/v/release/HenryLoM/DigitalWife?sort=semver&color=green)
+![License](https://img.shields.io/github/license/HenryLoM/DigitalWife?color=orange)
+
 ## 📑 Table of Contents
 - [✨ Overview](#-overview)
 - [🎬 Launching Process](#-launching-process)
@@ -100,8 +106,7 @@ DigitalWife/
 │
 ├── arduino/
 │   ├── arduino-controller.js  # Signal transfer for Arduino
-│   ├── response-parser.js     # Parser for turning responses to commands
-└
+│   └── response-parser.js     # Parser for turning responses to commands
 ```
 
 ---
@@ -184,7 +189,7 @@ Manages **character customization popup**.
 - 👇 Opens with `Customize` button.
 - 📑 Two-page navigation:
     - **Page 0**: Clothes, Places, Additional.
-    - **Page 1**: Skin Tone, Hairstyles.
+    - **Page 1**: Skin Tones, Hairstyles.
 
 - 🎨 **Assets defined in lists**:  
     - `bodiesList` → skin tones.
@@ -231,7 +236,7 @@ Manages **character customization popup**.
 ---
 
 ## 📜 Notes
-- Requires **Ollama** running locally (`default port 11434`).
+- Requires **Ollama** running locally (`default port is 11434`).
 - Default model: `"NicoleShelterV1"`.
 - Uses **localStorage** to persist appearance, avatar, and AI memory across sessions.
 - Chat controls include refresh, edit, delete, copy for fine-grained conversation control.
