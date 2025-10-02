@@ -48,6 +48,7 @@ function createThemeSwitcher() {
         darkMode = !darkMode;          // Switch the boolean
         applyTheme(darkMode);         //  Change the theme colors
         updateSwitcherUI(darkMode);  //   Update UI accordingly
+        console.log(`[☂ LOG ☂ THEME ☂] — Theme turned ${darkMode ? "dark" : "light"}.`);  // LOGGING: Log
     });
 
     /**

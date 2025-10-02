@@ -1,0 +1,132 @@
+<!-- ================================================================== -->
+<!-- DigitalWife - Homepage -->
+<!-- ================================================================== -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DigitalWife — Homepage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/frontend/styles/chat.css">
+    <link rel="stylesheet" href="/frontend/styles/homepage.css">
+
+    <!-- Scripts -->
+    <script src="/frontend/src/*theme-switcher.js"      type="module" defer></script>
+    <script src="/frontend/src/controllers/homepage.js" type="module"></script>
+</head>
+<body>
+
+<!-- ================================================================== -->
+<!-- Frame Structure -->
+<!-- ================================================================== -->
+<div id="frame-wrapper">
+    <div class="frame-corner left-top"></div>
+    <div class="frame-corner right-top"></div>
+    <div class="frame-corner left-bottom"></div>
+    <div class="frame-corner right-bottom"></div>
+
+    <div class="frame-edge top"></div>
+    <div class="frame-edge bottom"></div>
+    <div class="frame-edge left"></div>
+    <div class="frame-edge right"></div>
+</div>
+
+<!-- ================================================================== -->
+<!-- Table Layout -->
+<!-- ================================================================== -->
+<table>
+    <thead>
+        <tr>
+            <td>
+                <pre class="centered color" style="margin-top: -75px;">
+  |\      _,,,---,,_
+ZZZzz /,`.-'`'    -.  ;-;;,_
+       |,4-  ) )-,_. ,\ (  `' -'
+'--''(_/--'  `-'\_)
+                </pre>
+
+                <p style="text-align: center;">
+                    > <a href="/frontend/pages/homepage.html" class="mask">Home</a> < |
+                    <a href="/frontend/pages/chat.html">Chat</a> |
+                    <a href="/frontend/pages/log.html" class="mask"><i>Last updated:</i> 2025-10-02</a>
+                </p>
+            </td>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>
+                <!-- ================================================================== -->
+                <!-- Main Container -->
+                <!-- ================================================================== -->
+                <div id="container-setup" style="display: flex; flex-direction: column; align-items: center; gap: 32px; margin-top: 32px;">
+
+                    <!-- Title -->
+                    <h1 class="centered color" style="font-size: 2.8em; margin: 0;">Wife AI</h1>
+
+                    <!-- Separator -->
+                    <h2 class="centered color" style="font-size: 1.2em; margin: -1em 0 0 0;">AI souse that can chat and react to your actions</h2>
+
+                    <!-- Nicole Roller Endless -->
+                    <div id="nicole-roller" class="container-row">
+                        <div id="nicole-roller-track"></div>
+                    </div>
+
+                    <!-- Separator -->
+                    <h2 class="centered color" style="font-size: 1.2em; margin: -1em 0 -0.8em 0;">Start chatting! You can make your spouse on your own using customizing tools.</h2>
+                    <h2 class="centered color" style="font-size: 1.2em; margin: -1em 0 -0.8em 0;">Also feel free to report any issues.</h2>
+
+                    <!-- Buttons -->
+                    <div style="display: flex; gap: 24px;">
+                        <a href="/frontend/pages/chat.html" class="mask"><button style="margin: -10px 0 -10px 5px;">Try Chat Now</button></a>
+                        <a href="https://github.com/HenryLoM/DigitalWife" target="_blank" class="mask"><button style="margin: -10px 0 -10px 0;">GitHub Source</button></a>
+                    </div>
+
+                    <!-- Separator -->
+                    <h1 class="centered color" style="font-size: 1.5em; margin: 0;">Little guideness</h1>
+
+                    <!-- Screenshots -->
+                    <div style="display: flex; gap: 32px; text-align: center;">
+                        <div>
+                            <img src="/frontend/media/screenshots/chat.png" alt="Chat Screenshot" class="screenshot">
+                            <p style="margin-top: 8px; font-size: 1.1em; color: var(--in-color);">Chat</p>
+                        </div>
+                        <div>
+                            <img src="/frontend/media/screenshots/settings.png" alt="Settings Screenshot" class="screenshot">
+                            <p style="margin-top: 8px; font-size: 1.1em; color: var(--in-color);">Settings</p>
+                        </div>
+                    </div>
+
+                    <!-- Modal -->
+                    <div id="modal">
+                        <div id="modalContent">
+                            <button id="closeModal">×</button>
+                            <img id="modalImg" src="" alt="Expanded Screenshot">
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td>
+                <pre class="centered color">
+   へ     ╱|、
+૮ - ՛ )   (` - 7
+乀(ˍ,ل ل    じしˍ,)ノ
+<i>Incel home! (Kidding)</i>
+                </pre>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+</body>
+</html>

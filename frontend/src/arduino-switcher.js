@@ -40,6 +40,7 @@ function createArduinoSwitcher() {
         window.isArduino = !window.isArduino;
         applyArduinoState(window.isArduino);
         updateSwitcherUI(window.isArduino);
+        console.log(`[☂ LOG ☂ ARDUINO ☂] — Arduino ${window.isArduino ? "on" : "off"}.`);  // LOGGING: Log
     });
 
     /**

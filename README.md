@@ -13,7 +13,7 @@
 - [📂 Project Structure](#-project-structure)
 - [🖥️ HTML Pages](#-html-pages)
 - [⚙️ Core Scripts](#-core-scripts)
-    - [ai.js](#aijs)
+    - [chat.js](#chat.js)
     - [emotion-ai.js](#emotion-ai.js)
     - [customization-popup.js](#customization-popupjs)
 - [🎨 Assets](#-assets)
@@ -36,33 +36,34 @@ DigitalWife is a **browser-based virtual companion** built around:
 
 ## 🎬 Launching Process
 
-1. **Install Ollama**
-    - **macOS**
-        ```bash
-        brew install ollama
-        ```
-    - **Linux (Debian-based)**
-        ```bash
-        curl -fsSL https://ollama.com/install.sh | sh
-        ```
-    - **Windows**
+1. Download Ollama
+```bash
+brew install ollama                               # macOS
+# curl -fsSL https://ollama.com/install.sh | sh   # Debian-based Linux
+# https://ollama.com/download/windows             # Windows (installer link)
+```
+2. **Run Ollama**
+```bash
+ollama serve
+```
 
-        [Download installer](https://ollama.com/download/windows)
+3. **Download an LLM**
+```bash
+ollama pull <model name>
+```
 
-2. **Start Ollama service**
-    ```bash
-    ollama serve
-    ```
-3. **Download a local LLM model**
-    ```
-    ollama pull <model-name>
-    ```
-4. Open the project
-    - Run a localhost server and open `homepage.html`
-5. **Set up your model**
-    - In `chat.html` press **Settings** button.
-    - Enter the name of the pulled model.
-    - Save and feel free to use.
+4. **Run localhost with the repository**
+```bash
+git clone https://github.com/HenryLoM/DigitalWife.git
+cd ./DigitalWife/
+python3 -m http.server 8000
+```
+
+5. **Open in Browser**
+   - Go to: [http://localhost:8000/frontend/pages/homepage.html](http://localhost:8000/frontend/pages/homepage.html)
+   - Click **Settings**
+   - Enter your model name (e.g., `llama3`)
+   - Click **Save**, then start using 🚀
 
 ---
 
@@ -75,38 +76,71 @@ DigitalWife/
 ├── .gitignore
 ├── favicon.ico
 │
-├── pages/
-│ ├── homepage.html            # Landing page
-│ ├── chat.html                # Main chat interface
-│ ├── log.html                 # Logs / update notes
-│ └── chat.css                 # Styling
+├── frontend/
+│   ├── pages/
+│   │   ├── homepage.html               # Landing page
+│   │   ├── chat.html                   # Main chat interface
+│   │   └── log.html                    # Logs / update notes
+|   |
+│   ├── styles/                         # Styling
+│   │   ├── chat.css
+│   │   ├── homepage.css
+│   │   └── log.css
+│   │
+│   ├── src/
+│   │   ├── *tag-variables.js           # Style variables (tags, HTML & CSS-related)
+│   │   ├── *theme-switcher.js          # Light/dark mode toggler
+│   │   ├── arduino-switcher.js         # UI toggle for Arduino ON/OFF
+│   │   ├── chat.js                     # Core AI chat logic
+│   │   ├── customization-popup.js      # Appearance customization popup
+│   │   ├── emotion-ai.js               # Emotion detector
+│   │   ├── vader-sentiment.js          # Sentiment analyzer
+│   │   │
+│   │   ├── controllers/                # Scripts for page working
+│   │   │   ├── chat.js
+│   │   │   ├── homepage.js
+│   │   │   └── log.js
+│   │   │
+│   │   ├── files/                      # Static AI memory & persona
+│   │   │   ├── avatar.txt              # User data
+│   │   │   ├── instructions.txt        # System prompt / lore
+│   │   │   ├── recollection.txt        # AI memory
+│   │   │   └── touching-phrases.txt    # Prewritten emotional phrases
+│   │   │
+│   │   ├── modules/                    # Logic split into focused modules
+│   │   │   ├── emotion-ai-handler.js
+│   │   │   ├── interaction-handler.js
+│   │   │   ├── theme-handler.js
+│   │   │   └── ui-helper.js
+│   │   │
+│   │   │── utils/                      # Generic helpers
+│   │   │   ├── frame-utils.js
+│   │   │   ├── memory-utils.js
+│   │   │   ├── popup-utils.js
+│   │   │   └── settings-utils.js
+│   │   │
+│   │   └── files/                      # Static AI memory & persona
+│   │       ├── avatar.txt              # User data
+│   │       ├── instructions.txt        # System prompt / lore
+│   │       ├── recollection.txt        # AI memory
+│   │       └── touching-phrases.txt    # Prewritten emotional phrases
+│   │
+│   └── media/
+│       ├── screenshots/...             # Demo screenshots
+│       ├── places/...                  # Backgrounds (street, park, etc.)
+│       ├── frame/...                   # Decorative chat frame
+│       ├── mini-frame/...              # Smaller frame
+│       └── nicole/                     # Character sprites
+│           ├── bodies/...              # Skin tones
+│           ├── clothes/...             # Clothes & uniforms
+│           ├── expressions/...         # Neutral, happy, angry, sad, etc.
+│           └── additional/...          # Accessories (headphones, blush, etc.)
 │
-├── code/
-│ ├── ai.js                    # Core AI logic
-│ ├── emotion-ai.js            # Detector of responce's emotional context
-│ ├── customization-popup.js   # Appearance customization popup
-│ ├── mixer.js                 # Extra AI/logic features
-│ ├── vader-sentiment.js       # Sentiment analyzer
-│ └── files/
-│   ├── instructions.txt       # System prompt / lore
-│   ├── avatar.txt             # User data
-│   ├── recollection.txt       # AI memory
-│   └── touching-phrases.txt   # Prewritten lines
-│
-├── media/
-│ ├── screenshots/...          # Demo screenshots
-│ ├── places/...               # Backgrounds (street, park, etc.)
-│ ├── frame/...                # Decorative chat frame
-│ ├── mini-frame/...           # Smaller frame
-│ └── nicole/                  # Character sprites
-│   ├── bodies/...             # Skin tones
-│   ├── clothes/...            # Clothes & uniforms
-│   ├── expressions/...        # Neutral, happy, angry, sad, etc.
-│   └── additional/...         # Accessories (headphones, ribbons, blush)
+├── backend/                            # (Placeholder for the future backend)
 │
 ├── arduino/
-│   ├── arduino-controller.js  # Signal transfer for Arduino
-│   └── response-parser.js     # Parser for turning responses to commands
+│   ├── arduino-controller.js           # Signal transfer for Arduino
+│   └── response-parser.js              # Parser for turning responses to commands
 ```
 
 ---
@@ -133,7 +167,7 @@ DigitalWife/
 
 ## ⚙️ Core Scripts
 
-### **ai.js**
+### **chat.js**
 Handles all **AI interactions and memory**.
 - 🔌 **Ollama integration** (`chatWithOllama`)
     - Connects to local Ollama instance.
@@ -244,10 +278,10 @@ Manages **character customization popup**.
 ---
 
 ## 📸 Screenshots
-![screen of chat page](/media/screenshots/chat.png?raw=true)
+![screen of chat page](/frontend/media/screenshots/chat.png?raw=true)
 Chat explanation
 
-![screen of settings menu](/media/screenshots/settings.png?raw=true)
+![screen of settings menu](/frontend/media/screenshots/settings.png?raw=true)
 Settings explanation
 
 ---
