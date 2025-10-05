@@ -89,5 +89,5 @@ function applyTheme(dark) {
     }
 }
 
-// Run createThemeSwitcher when DOM is loaded (redundant if inside first listener, can remove this if desired)
+// Run createThemeSwitcher when localStorage is loaded (redundant if inside first listener, can remove this if desired)
 document.addEventListener("DOMContentLoaded", createThemeSwitcher);

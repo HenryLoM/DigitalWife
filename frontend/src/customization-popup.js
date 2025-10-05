@@ -8,7 +8,7 @@
  * - Update a descriptive context of the character's appearance.
  * - Dynamically generate a popup customization menu with sections for clothes, places, extras, and hairstyles.
  * - Handle navigation between customization sections.
- * - Render overlays in the DOM for selected attributes.
+ * - Render overlays in the localStorage for selected attributes.
  */
 
 // ================================

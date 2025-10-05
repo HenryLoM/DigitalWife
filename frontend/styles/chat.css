@@ -267,7 +267,7 @@ input:focus {
     transform: translate(-50%, -50%);
     z-index: 1001;
 }
-.change-ai-button-preset,
+.restore-program-button-preset,
 .force-shut-button-preset {
     position: fixed;
     top: 30px;
@@ -277,6 +277,10 @@ input:focus {
     width: 35px;
     height: 35px;
     border-radius: 50%;
+}
+
+.restore-program-button-preset {
+    top: 75px;
 }
 
 .info-button-preset {

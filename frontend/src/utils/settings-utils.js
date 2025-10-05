@@ -1,3 +1,5 @@
+import * as BackendAPI from "/frontend/src/api/backend-api.js";
+
 /**
  * Opens the Settings popup for AI technical and appearance configuration.
  *
@@ -89,6 +91,12 @@ function saveSettings(state, onSave) {
     // Callback for syncing external state
     Object.assign(state, newState);
     if (onSave) onSave(newState);
+
+    // Persist to database
+    BackendAPI.updateField("settings", newState).catch(() => {});
+    BackendAPI.updateField("ai-name", newState.aiName).catch(() => {});
+    BackendAPI.updateField("ollama-model", newState.model).catch(() => {});
+    BackendAPI.updateField("ollama-port", newState.port).catch(() => {});
     closeSettings();
 
     // Update UI
@@ -134,7 +142,7 @@ function exportSetup() {
         "blush-overlay":      "blush"
     };
 
-    // Collect overlays (images + divs) from the DOM
+    // Collect overlays (images + divs) from the localStorage
     let overlays = Array.from(document.querySelectorAll(".lo-to-save")).map(el => {
         const key = idToLabelKey[el.id];
         const label = key ? labelMap[key] : null;
@@ -254,6 +262,10 @@ function importSetup() {
 
             // Update UI title
             document.getElementById(HTML_TAG.titleInputField).placeholder = `${localStorage.getItem("ai-name")}'s room`;
+            // Persist full imported setup to backend
+            try {
+                BackendAPI.saveToBackend(setup).catch(() => {});
+            } catch (err) {}
             console.log(`[☂ LOG ☂ IMPORT ☂] — Setup imported from ${file.name}.`);  // LOGGING: Log
             closeSettings();
         } catch (err) {

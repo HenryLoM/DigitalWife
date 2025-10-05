@@ -1,5 +1,8 @@
 // ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== Imports
 
+// API
+import * as BackendAPI      from "/frontend/src/api/backend-api.js";
+// Utils
 import * as memoryUtils     from "/frontend/src/utils/memory-utils.js";
 import * as popupUtils      from "/frontend/src/utils/popup-utils.js";
 import * as settingsUtils   from "/frontend/src/utils/settings-utils.js";
@@ -169,7 +172,7 @@ function appendMessage(sender, text, index) {
     // Frame for the message (container div)
     const messageElem = document.createElement("div");
     messageElem.className = CSS_TAG.messageFramePreset;
-    messageElem.dataset.index = index;  // Store index in the frame DOM
+    messageElem.dataset.index = index;  // Store index in the frame localStorage
     // Wrapper for the message text itself
     const wrapper = document.createElement("div");
     wrapper.className = "message-text";
@@ -190,7 +193,11 @@ function appendMessage(sender, text, index) {
 
 // ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== Button working
 
-/** Wrapper for handleAiResponse. */
+/**
+ * Wrapper for handleAiResponse.
+ * 
+ * @returns {void}
+ */
 async function sendMessageButton() {
     const userInput = document.getElementById(HTML_TAG.chattingInputField);
     const userMessage = userInput.value.trim();
@@ -199,7 +206,11 @@ async function sendMessageButton() {
     handleAiResponse(userMessage);
 }
 
-/** Wrapper for shut-down system. */
+/**
+ * Forcefully stops the AI response generation and attempts to shut down the Ollama service.
+ * 
+ * @returns {void}
+ */
 async function forceShut() {
     if (ollamaAbortController) ollamaAbortController.abort();
     try {
@@ -208,7 +219,27 @@ async function forceShut() {
         // Silent fail if shutdown not available
     }
     ollamaAbortController = new AbortController();
-    console.warn("[⚠︎ WARNING ⚠︎] — ChatBot forced shut up");
+    console.warn("[⚠︎ WARNING ⚠︎] — ChatBot forced shut up");  // LOGGING: Warning
+}
+
+/**
+ * Restores the program to its initial state by resetting the backend and clearing local storage.
+ * 
+ * @returns {void}
+ */
+async function restoreProgram() {
+    // Reset backend JSON
+    await fetch("http://localhost:8000/api/data", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({})  // Here may be default template instead of full-clearing {}
+    });
+    // Clear localStorageq
+    let lastTheme = localStorage.getItem("theme")
+    localStorage.clear();
+    localStorage.setItem("theme", lastTheme);
+    // Reload page
+    location.reload();
 }
 
 // ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== Misc
@@ -221,7 +252,7 @@ async function forceShut() {
 async function initializeContext() {
     // Load from localStorage if available, else from file
     memory = memoryUtils.loadMemoryFromLocalStorage();
-    currentIndex = memory.length > 0 ? memory[memory.length - 1].index + 1 : 0;  // To avoid colliding with existing messages when reloading from DOM
+    currentIndex = memory.length > 0 ? memory[memory.length - 1].index + 1 : 0;  // To avoid colliding with existing messages when reloading from localStorage
     memory.forEach(msg => {
         appendMessage(msg.role === "user" ? userName : aiName, msg.content, msg.index);
     });
@@ -237,10 +268,66 @@ async function initializeContext() {
     recollection = await loadFile(recollectionPath, "recollection");
     memoryName   = document.getElementById(HTML_TAG.titleInputField).placeholder.trim()
     const input  = document.getElementById(HTML_TAG.chattingInputField);
+    // Get to the database and merge into localStorage/state
+    const remote = await BackendAPI.loadFromBackend();
+    if (remote && typeof remote === 'object') {
+        // Merge known fields
+        if (remote['ai-name'])         { localStorage.setItem('ai-name', remote['ai-name']); aiName = remote['ai-name']; }
+        if (remote['ollama-model'])    { localStorage.setItem('ollama-model', remote['ollama-model']); model = remote['ollama-model']; }
+        if (remote['ollama-port'])     { localStorage.setItem('ollama-port', remote['ollama-port']); port = remote['ollama-port']; }
+        if (remote['arduino-device'])  { localStorage.setItem('arduino-device', remote['arduino-device']); port = remote['arduino-device']; }
+        if (remote['arduino-baud'])    { localStorage.setItem('arduino-baud', remote['arduino-baud']); port = remote['arduino-baud']; }
+        if (remote.instructions) { localStorage.setItem('instructions', remote.instructions); instructions = remote.instructions; }
+        if (remote.avatar)       { localStorage.setItem('avatar', remote.avatar); avatar = remote.avatar; }
+        if (remote.recollection) { localStorage.setItem('recollection', remote.recollection); recollection = remote.recollection; }
+        if (remote.chatMemory)        { 
+            // If localStorage already has chatMemory we don't want to clobber it here.
+            const localChat = JSON.parse(localStorage.getItem('chatMemory') || 'null');
+            if (!localChat || !Array.isArray(localChat) || localChat.length === 0) {
+                // Persist remote chatMemory into localStorage and use it as the in-memory messages
+                localStorage.setItem('chatMemory', JSON.stringify(remote.chatMemory));
+                memory = Array.isArray(remote.chatMemory) ? remote.chatMemory.slice() : [];
+            } else {
+                // Prefer local version if it exists
+                memory = localChat;
+            }
+        }
+        if (remote.appearanceContext) { localStorage.setItem('appearanceContext', remote.appearanceContext); window.appearanceContext = remote.appearanceContext; }
+        if (remote.appearanceLayers)  {
+            Object.entries(remote.appearanceLayers).forEach(([id, val]) => {
+                const el = document.getElementById(id);
+                if (el && val) {
+                    if (val.src && el.tagName.toLowerCase() === 'img') el.src = val.src;
+                    if (val.display !== undefined) el.style.display = val.display;
+                }
+            });
+        }
+    }
+    // Ensure localStorage mirrors the finalized values
+    localStorage.setItem("ai-name",        aiName);
+    localStorage.setItem("ollama-model",   model);
+    localStorage.setItem("ollama-port",    port);
+    localStorage.setItem("arduino-device", arduinoDevice);
+    localStorage.setItem("arduino-baud",   baudRate);
+    localStorage.setItem("instructions",   instructions);
+    localStorage.setItem("avatar",         avatar);
+    localStorage.setItem("recollection",   recollection);
+    // If memory was loaded from backend (and not yet rendered), render it now
+    if (Array.isArray(memory) && memory.length > 0) {
+        // Clear any existing UI messages first (in case we rendered earlier from localStorage)
+        const chatContent = document.getElementById(HTML_TAG.chattingContent);
+        chatContent.innerHTML = "";
+        memory.forEach(msg => {
+            appendMessage(msg.role === "user" ? userName : aiName, msg.content, msg.index);
+        });
+        // Ensure currentIndex follows last message index
+        currentIndex = memory.length > 0 ? memory[memory.length - 1].index + 1 : 0;
+    }
+    // Get to the page
     input.focus();
-    document.getElementById(HTML_TAG.titleInputField).placeholder = `${aiName}'s room`;      // Update placeholder's text in advance
-    window.updateAppearanceContext();                                            //  Update appearanceContext based on pre-loaded layers
-    console.log("[☂ LOG ☂ INITIALIZATION ☂] — Chat initialized successfully.")  //   LOGGING: Log
+    document.getElementById(HTML_TAG.titleInputField).placeholder = `${aiName}'s room`;  // Update placeholder's text in advance
+    window.updateAppearanceContext();                                                   //  Update appearanceContext based on pre-loaded layers
+    console.log("[☂ LOG ☂ INITIALIZATION ☂] — Chat initialized successfully.")         //   LOGGING: Log
 }
 
 // ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== The beginning
@@ -252,7 +339,7 @@ document.getElementById(HTML_TAG.chattingInputField).addEventListener("keydown",
         sendMessageButton();
     }
 });
-// Let use button functions as soon as DOM is loaded
+// Let use button functions as soon as localStorage is loaded
 document.addEventListener("DOMContentLoaded", () => {
     appearanceUtils.restoreAppearanceLayers();
     // Naming the chat
@@ -263,6 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Message group
     document.getElementById("send-btn").addEventListener("click", sendMessageButton);
     document.getElementById("force-shut-btn").addEventListener("click", forceShut);
+    document.getElementById("restore-program-btn").addEventListener("click", restoreProgram);
     // Memory group
     document.getElementById("save-memory-btn").addEventListener("click", () => {memoryUtils.saveMemoryToFile(memory, userName, aiName, memoryName)});
     document.getElementById("load-memory-btn").addEventListener("click", async () => {

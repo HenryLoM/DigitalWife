@@ -1,3 +1,5 @@
+import * as BackendAPI from "/frontend/src/api/backend-api.js";
+
 /**
  * Opens a popup editor for editing the selected object.
  *
@@ -49,7 +51,10 @@ export function closeEditor() {
 export function saveEditor(lastEditingObject) {
     const value = document.getElementById(HTML_TAG.popupInputField).value;
     if (["avatar", "recollection", "instructions"].includes(lastEditingObject)) {
+        // Persist to localStorage
         localStorage.setItem(lastEditingObject, value);
+        // Persist to database
+        BackendAPI.updateField(lastEditingObject, value).catch(() => {});
         closeEditor();
         console.log(`[☂ LOG ☂ EDITING ☂] — ${lastEditingObject} saved.`);  // LOGGING: Log
         return value;
@@ -58,7 +63,6 @@ export function saveEditor(lastEditingObject) {
         return null;
     }
 }
-
 
 /**
  * Shows a hint for the selected file type.

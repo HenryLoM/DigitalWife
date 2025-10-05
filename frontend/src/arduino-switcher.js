@@ -16,7 +16,7 @@ function createArduinoSwitcher() {
     const circle = document.createElement("div");
     circle.className = "arduino-toggle-circle";
 
-    // Build DOM structure
+    // Build localStorage structure
     button.appendChild(circle);
     switcher.appendChild(button);
     document.body.appendChild(switcher);
@@ -73,5 +73,5 @@ function applyArduinoState(on) {
     }
 }
 
-// Run when DOM is ready
+// Run when localStorage is ready
 document.addEventListener("DOMContentLoaded", createArduinoSwitcher);

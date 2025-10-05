@@ -30,3 +30,11 @@ shutter.id = "force-shut-btn";
 shutter.className = "force-shut-button-preset";
 shutter.innerText = "✸";
 document.body.appendChild(shutter);
+
+// ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== Restore program button
+
+const restorer = document.createElement("button");
+restorer.id = "restore-program-btn";
+restorer.className = "restore-program-button-preset";
+restorer.innerText = "∅";
+document.body.appendChild(restorer);

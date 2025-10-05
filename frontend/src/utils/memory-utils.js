@@ -1,11 +1,15 @@
+import * as BackendAPI from "/frontend/src/api/backend-api.js";
+
+
 /**
- * Saves the entire chat memory into localStorage.
+ * Saves the entire chat memory into localStorage & database.
  *
  * @param {Array} memory - The chat memory array to save.
  * @returns {void}
  */
 export function saveMemoryToLocalStorage(memory) {
-    localStorage.setItem("chatMemory", JSON.stringify(memory));
+    localStorage.setItem("chatMemory", JSON.stringify(memory));     // Persist to localStorage
+    BackendAPI.updateField("chatMemory", memory).catch(() => {});  //  Persist to database
 }
 
 /**
@@ -24,8 +28,8 @@ export function loadMemoryFromLocalStorage() {
  *
  * @param {string} userName        - Name of the user.
  * @param {string} aiName          - Name of the AI.
- * @param {Function} appendMessage - Function to render messages back into DOM.
- * @param {string} titleInputField - DOM id of the chat title input field.
+ * @param {Function} appendMessage - Function to render messages back into localStorage.
+ * @param {string} titleInputField - localStorage id of the chat title input field.
  * @returns {Promise<[Array, number, string]>} Updated memory, new currentIndex, and memoryName.
  */
 export async function loadMemoryFromFile(userName, aiName, appendMessage) {

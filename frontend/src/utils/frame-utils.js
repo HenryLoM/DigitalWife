@@ -2,7 +2,7 @@ import * as memoryUtils from "/frontend/src/utils/memory-utils.js";
 
 /**
  * Creates a row of control buttons (refresh, delete, edit, copy) 
- * and returns it as a DOM element to be appended to a message frame.
+ * and returns it as a localStorage element to be appended to a message frame.
  *
  * @param {string} sender - The role of the message sender. Should match aiName for AI messages.
  * @param {number} index  - The index of the message in memory.
@@ -74,7 +74,7 @@ export function copyText(index, ctx) {
  *
  * @param {number} index  - Index of the message.
  * @param {string} sender - Sender role/name.
- * @param {Object} ctx    - Context containing DOM refs, memory, and callbacks.
+ * @param {Object} ctx    - Context containing localStorage refs, memory, and callbacks.
  * @returns {void}
  */
 export function editMessage(index, sender, ctx) {
@@ -144,7 +144,7 @@ export function deleteMessageByIndex(index, ctx) {
         mem.splice(msgPos, 1);
     }
 
-    // Remove the corresponding DOM element
+    // Remove the corresponding localStorage element
     const chattingContent = document.getElementById(HTML_TAG.chattingContent);
     const messages = [...chattingContent.getElementsByClassName(CSS_TAG.messageFramePreset)];
     const targetElem = messages.find(elem => parseInt(elem.dataset.index) === index);
@@ -224,7 +224,7 @@ function summonTooltip(text, time, isAbove = true, isLeftAlligned = true) {
 }
 
 /**
- * Deletes all messages from memory and DOM up to and including the specified index.
+ * Deletes all messages from memory and localStorage up to and including the specified index.
  * 
  * @param {number} targetIndex - The highest index to delete (inclusive).
  * @returns {void}
@@ -236,7 +236,7 @@ function rewindMessages(targetIndex, ctx) {
         if (mem[i].index >= targetIndex) mem.splice(i, 1);
     }
 
-    // Remove corresponding DOM elements
+    // Remove corresponding localStorage elements
     const chattingContent = document.getElementById(HTML_TAG.chattingContent);
     const messages = [...chattingContent.getElementsByClassName(CSS_TAG.messageFramePreset)];
     messages.forEach(elem => {

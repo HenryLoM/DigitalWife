@@ -42,6 +42,7 @@ brew install ollama                               # macOS
 # curl -fsSL https://ollama.com/install.sh | sh   # Debian-based Linux
 # https://ollama.com/download/windows             # Windows (installer link)
 ```
+
 2. **Run Ollama**
 ```bash
 ollama serve
@@ -52,18 +53,25 @@ ollama serve
 ollama pull <model name>
 ```
 
-4. **Run localhost with the repository**
+4. **Clone repository, install requirements, run app**
 ```bash
 git clone https://github.com/HenryLoM/DigitalWife.git
 cd ./DigitalWife/
-python3 -m http.server 8000
+pip install -r backend/requirements.txt
+python3 launch.py
 ```
 
-5. **Open in Browser**
-   - Go to: [http://localhost:8000/frontend/pages/homepage.html](http://localhost:8000/frontend/pages/homepage.html)
-   - Click **Settings**
-   - Enter your model name (e.g., `llama3`)
-   - Click **Save**, then start using 🚀
+5. **Inside the app**
+- Enter **chat** page
+- Click **Settings**
+- Enter your model name
+- Click **Save**, then start using 🚀
+
+> **💡 Prefer using your browser?**
+>
+> Instead of doing `python3 launch.py` from step 4, do this:
+> - Run `cd backend & uvicorn main:app --reload`
+> - Go to: [http://localhost:8000/frontend/pages/homepage.html](http://localhost:8000/frontend/pages/homepage.html)
 
 ---
 
@@ -119,6 +127,9 @@ DigitalWife/
 │   │   │   ├── popup-utils.js
 │   │   │   └── settings-utils.js
 │   │   │
+│   │   │── api/                        # Modules to work with backend
+│   │   │   └── backend-api.js
+│   │   │
 │   │   └── files/                      # Static AI memory & persona
 │   │       ├── avatar.txt              # User data
 │   │       ├── instructions.txt        # System prompt / lore
@@ -136,7 +147,11 @@ DigitalWife/
 │           ├── expressions/...         # Neutral, happy, angry, sad, etc.
 │           └── additional/...          # Accessories (headphones, blush, etc.)
 │
-├── backend/                            # (Placeholder for the future backend)
+├── backend/
+│   ├── requirements.txt
+│   ├── db.json
+│   ├── db_utils.py
+│   └── main.py
 │
 ├── arduino/
 │   ├── arduino-controller.js           # Signal transfer for Arduino
@@ -175,7 +190,7 @@ Handles all **AI interactions and memory**.
 
 - 💬 **Chat workflow** (`handleAiResponse`)
     - Builds message payload (instructions, avatar, memory, context).
-    - Appends user + AI messages to DOM and memory.
+    - Appends user + AI messages to localStorage and memory.
 
 - 🧠 **Memory management**
     - Add / update / delete / rewind / refresh messages.
@@ -233,9 +248,9 @@ Manages **character customization popup**.
     - `additionalList` → flowers, ribbons, headphones, blush.
 
 - ⚙️ Each selection:
-    - Updates corresponding DOM overlay (`clothes-overlay`, `background`, etc.).
+    - Updates corresponding localStorage overlay (`clothes-overlay`, `background`, etc.).
     - Updates `selected*` globals + `appearanceContext`.
-    - Saves to localStorage.
+    - Saves to localStorage and database.
 
 - 🫷 Includes **close button** and smooth transitions.
 
@@ -250,7 +265,7 @@ Manages **character customization popup**.
 
 ## 💾 Memory System
 - Chat stored in array of `{ index, role, content }`.
-- Index ensures **sync between DOM and memory**.
+- Index ensures **sync between localStorage and memory**.
 - Supports:
     - Save to `.txt`.
     - Load from `.txt`.
