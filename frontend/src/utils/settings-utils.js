@@ -170,19 +170,35 @@ function exportSetup() {
         overlays:       overlays
     };
 
-    // Export JSON
     const json = JSON.stringify(setup, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${setup.aiName || "AI"}'s setup.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
 
-    console.log(`[☂ LOG ☂ EXPORT ☂] — Setup exported as ${a.download}.`);  // LOGGING: Log
+    if (window.pywebview) {
+        // Running in webview, send setup data to backend
+        fetch("/save-file", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                fileName: `${setup.aiName || "AI"}'s setup.json`,
+                content: json
+            })
+        }).then(() => {
+            console.log(`[☂ LOG ☂ EXPORT ☂] — Setup exported as ${setup.aiName || "AI"}'s setup.json via backend.`);
+        }).catch(err => {
+            console.error("[☂ ERROR ☂ EXPORT ☂] — Failed to export setup via backend:", err);
+        });
+    } else {
+        // Running in browser, use Blob and URL.createObjectURL
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${setup.aiName || "AI"}'s setup.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log(`[☂ LOG ☂ EXPORT ☂] — Setup exported as ${a.download}.`);
+    }
 }
 
 /**

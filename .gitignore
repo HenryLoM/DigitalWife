@@ -1,3 +1,6 @@
 # MacOS system files
 .DS_Store
-code/.DS_Store
+backend/.DS_Store
+# Python cache files
+backend/__pycache__/
+venv

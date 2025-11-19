@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, HTTPException, Body, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -53,3 +53,20 @@ async def root() -> FileResponse:
 async def favicon() -> FileResponse:
     """Serve the favicon."""
     return FileResponse(favicon_path)
+
+@app.post("/save-file")
+async def save_file(request: Request):
+    data = await request.json()
+    file_name = data.get("fileName", "default.txt")
+    content = data.get("content", "")
+
+    # Detect the Downloads directory
+    downloads_dir = os.path.expanduser("~/Downloads")
+    os.makedirs(downloads_dir, exist_ok=True)  # Ensure the directory exists
+
+    # Save the file in the Downloads directory
+    file_path = os.path.join(downloads_dir, file_name)
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.write(content)
+
+    return {"message": f"File {file_name} saved successfully in Downloads."}

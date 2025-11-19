@@ -1,6 +1,5 @@
 import * as BackendAPI from "/frontend/src/api/backend-api.js";
 
-
 /**
  * Saves the entire chat memory into localStorage & database.
  *
@@ -24,12 +23,56 @@ export function loadMemoryFromLocalStorage() {
 }
 
 /**
+ * Saves the memory as the txt file.
+ *
+ * @param {Array}  memory     - Current memory array.
+ * @param {string} userName   - Name of the user.
+ * @param {string} aiName     - Name of the AI.
+ * @param {string} memoryName - File name to save.
+ * @returns {void}
+ */
+export function saveMemoryToFile(memory, userName, aiName, memoryName) {
+    let text = "";
+    memory.forEach(msg => {
+        const prefix = msg.role === "user" ? `[${userName}:]` : `[${aiName}:]`;
+        text += `${prefix} ${msg.content}\n`;
+    });
+
+    if (window.pywebview) {
+        // Running in webview, send file data to backend
+        fetch("/save-file", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                fileName: `${memoryName}.txt`,
+                content: text
+            })
+        }).then(() => {
+            console.log(`[☂ LOG ☂ EXPORT ☂] — Memory saved as ${memoryName}.txt via backend.`);
+        }).catch(err => {
+            console.error("[☂ ERROR ☂ EXPORT ☂] — Failed to save memory via backend:", err);
+        });
+    } else {
+        // Running in browser, use Blob and URL.createObjectURL
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${memoryName}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log(`[☂ LOG ☂ EXPORT ☂] — Memory saved as ${memoryName}.txt.`);
+    }
+}
+
+/**
  * Loads the memory from a .txt file and reconstructs the chat history.
  *
  * @param {string} userName        - Name of the user.
  * @param {string} aiName          - Name of the AI.
  * @param {Function} appendMessage - Function to render messages back into localStorage.
- * @param {string} titleInputField - localStorage id of the chat title input field.
  * @returns {Promise<[Array, number, string]>} Updated memory, new currentIndex, and memoryName.
  */
 export async function loadMemoryFromFile(userName, aiName, appendMessage) {
@@ -152,31 +195,4 @@ export function trimMemory(memory, trimLimit) {
         console.log("[☂ LOG ☂ MEMORY ☂] — Memory trimmed.");  // LOGGING: Log
     }
     return memory;
-}
-
-/**
- * Saves the memory as the txt file.
- *
- * @param {Array}  memory     - Current memory array.
- * @param {string} userName   - Name of the user.
- * @param {string} aiName     - Name of the AI.
- * @param {string} memoryName - File name to save.
- * @returns {void}
- */
-export function saveMemoryToFile(memory, userName, aiName, memoryName) {
-    let text = "";
-    memory.forEach(msg => {
-        const prefix = msg.role === "user" ? `[${userName}:]` : `[${aiName}:]`;
-        text += `${prefix} ${msg.content}\n`;
-    });
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${memoryName}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    console.log(`[☂ LOG ☂ EXPORT ☂] — Memory saved as ${memoryName}.txt.`);  // LOGGING: Log
 }

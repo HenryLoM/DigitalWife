@@ -13,8 +13,8 @@
 - [📂 Project Structure](#-project-structure)
 - [🖥️ HTML Pages](#-html-pages)
 - [⚙️ Core Scripts](#-core-scripts)
-    - [chat.js](#chat.js)
-    - [emotion-ai.js](#emotion-ai.js)
+    - [chat.js](#chatjs)
+    - [emotion-ai.js](#emotion-aijs)
     - [customization-popup.js](#customization-popupjs)
 - [🎨 Assets](#-assets)
 - [💾 Memory System](#-memory-system)
@@ -70,7 +70,7 @@ python3 launch.py
 > **💡 Prefer using your browser?**
 >
 > Instead of doing `python3 launch.py` from step 4, do this:
-> - Run `cd backend & uvicorn main:app --reload`
+> - Run `cd backend && uvicorn main:app --reload`
 > - Go to: [http://localhost:8000/frontend/pages/homepage.html](http://localhost:8000/frontend/pages/homepage.html)
 
 ---
@@ -89,7 +89,7 @@ DigitalWife/
 │   │   ├── homepage.html               # Landing page
 │   │   ├── chat.html                   # Main chat interface
 │   │   └── log.html                    # Logs / update notes
-|   |
+│   │
 │   ├── styles/                         # Styling
 │   │   ├── chat.css
 │   │   ├── homepage.css
